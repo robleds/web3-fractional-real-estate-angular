@@ -1,4 +1,4 @@
-# Brix Frontend Angular
+# web3-fractional-real-estate-angular
 
 WebApp para venda fracionada de imóveis desenvolvida com Angular.
 
