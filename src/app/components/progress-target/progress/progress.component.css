@@ -1,0 +1,51 @@
+.progress-container {
+  position: relative;
+  width: 100%;
+  height: 55px;
+}
+
+.background-bar {
+  background-color: #eaeaea;
+  border-radius: 5px;
+  position: absolute;
+  height: 25px;
+  width: 100%;
+}
+
+.indicator-bar {
+  position: absolute;
+  height: 25px;
+  border-radius: 5px;
+  transition: width 0.5s, background-color 0.2s;
+}
+
+.target-marker {
+  background-color: #828a99;
+  position: absolute;
+  height: 100%;
+  width: 3px;
+  transition: left 0.5s;
+}
+
+.target-label {
+  position: absolute;
+  text-align: left;
+  bottom: 0;
+  padding-left: 10px;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+  margin-bottom: 3px;
+  transition: left 0.5s;
+  font-size: 14px;
+  color: #828a99;
+}
+
+.indicator-pct {
+  position: absolute;
+  top: 2px;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
+  font-weight: bold;
+  transition: all 0.5s;
+  font-size: 14px;
+}

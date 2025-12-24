@@ -1,0 +1,98 @@
+<mat-sidenav-container class="sidenav-container" style="height: 100%;">
+  <mat-sidenav #drawer class="home-sidenav" mode="over">
+    <mat-toolbar>
+      <mat-toolbar-row fxLayoutAlign="end center">
+        <button mat-button (click)="drawer.close()">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <section>
+        <ng-container>
+          <a mat-flat-button color="primary" (click)="drawer.close()" routerLink="/about">
+            <fa-icon [icon]="icons.solid.question" style="margin-right: 5px;"></fa-icon>
+            Quem somos
+          </a>
+        </ng-container>
+      </section>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="home-content" style="height: 100%;">
+    <mat-toolbar class="client-toolbar" >
+      <mat-toolbar-row fxLayoutAlign="space-between center">
+        <button mat-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
+          <mat-icon class="hamburger">menu</mat-icon>
+        </button>
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+          <img src="assets/logo.png" style="width: 130px; cursor: pointer" routerLink="/home"/>
+          <!--      <h2 style="cursor: pointer" routerLink="/home" class="primary-darker">BRICKS</h2>-->
+          <mat-form-field appearance="fill" class="searchbar" ngStyle.gt-md="width: 250px" fxHide.lt-sm>
+            <input type="text" matInput placeholder="Pesquisar...">
+            <fa-icon matSuffix [icon]="icons.solid.search" style="color: #888888;"></fa-icon>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-button routerLinkActive="active" routerLink="/about" fxHide.lt-sm>
+            <fa-icon [icon]="icons.solid.question" style="margin-right: 4px;"></fa-icon>
+            Quem somos
+          </button>
+          <button *ngIf="!authService.isLogged; else elseBlock" mat-button routerLinkActive="active"
+                  (click)="openLoginDialog()">
+            <fa-icon [icon]="icons.solid.signInAlt" style="margin-right: 10px;" fxHide.lt-sm></fa-icon>
+            Entrar | Registre-se
+          </button>
+          <ng-template #elseBlock>
+            <button mat-button [matMenuTriggerFor]="menu" class="nav-btn">
+              <mat-icon>account_circle</mat-icon>
+              <span style="margin: 0 8px;">{{authService.userData.name}}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" class="menu-black">
+              <div class="invisible-menu-item"></div>
+              <button mat-menu-item routerLink="/user">
+                <fa-icon [icon]="icons.solid.cog" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Minha Conta</span>
+              </button>
+              <button *ngIf="authService.userData.role === 'admin'" mat-button routerLink="/dash">
+                <fa-icon [icon]="icons.solid.lock" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Administração</span>
+              </button>
+              <button mat-menu-item (click)="authService.logout()">
+                <fa-icon [icon]="icons.solid.signOutAlt" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Logout</span>
+              </button>
+            </mat-menu>
+          </ng-template>
+        </div>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row fxLayoutAlign="start center" fxShow.lt-sm fxHide.gt-xs>
+        <mat-form-field appearance="fill" class="searchbar" style="width: 100%; margin: 0 16px 0 22px">
+          <input type="text" matInput placeholder="Pesquisar...">
+          <fa-icon matSuffix [icon]="icons.solid.search" style="color: #888888;"></fa-icon>
+        </mat-form-field>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row class="primary-header animate__animated animate__fadeInDown animate__faster" fxLayoutAlign="center center" *ngIf="authService.isLogged && (authService.userData.status === 1 || authService.userData.name === '')">
+        <div class="break-word" style="text-align: center; line-height: 20px;">
+          Por favor, <a routerLink="/onboard/register">clique aqui</a> para terminar seu cadastro.
+        </div>
+      </mat-toolbar-row>
+
+    </mat-toolbar>
+
+
+    <div style="height: 100%;" [ngStyle.gt-xs]="{'margin-top': (authService.isLogged && (authService.userData.status === 1 || authService.userData.name === '')) ? '128px' : '64px' }"
+         [ngStyle.lt-sm]="{'margin-top': (authService.isLogged && (authService.userData.status === 1 || authService.userData.name === '')) ? '176px' : '112px' }"
+         fxLayout="column" fxLayoutAlign="start stretch">
+      <router-outlet></router-outlet>
+
+      <app-footer></app-footer>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

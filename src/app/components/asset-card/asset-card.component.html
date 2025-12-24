@@ -1,0 +1,320 @@
+<ng-container *ngIf="format === 'card'">
+  <mat-card class="asset-card animate__animated animate__fadeIn" [ngClass]="{'pointer': category === 'home'}">
+
+    <div class="portrait" *ngIf="asset.gallery?.length === 0" fxLayout="row" fxLayoutAlign="center center"
+         style="margin-bottom: 15px; border-radius: 15px 15px 0 0;">
+      <div>
+        <fa-icon [icon]="icons.regular.image" size="5x" style="color: #ababab"></fa-icon>
+      </div>
+    </div>
+    <ngx-slick-carousel class="images-carousel" #slickImages
+                        [config]="cardConfig" *ngIf="asset.gallery?.length > 0"
+                        [ngClass]="{'showArrow': asset.showArrow, 'hideArrow': !asset.showArrow}">
+      <!--    (afterChange)="onAfterChange()" - tinha isso em cima mas aparentemente nao tava sendo usado-->
+
+      <div ngxSlickItem *ngFor="let image of asset.gallery" (mouseenter)="onMouseEnter($event,asset)"
+           (mouseleave)="onMouseLeave($event,asset)">
+        <!-- (mousedown)="onMouseDown()" - tinha isso em cima mas aparentemente nao tava sendo usado-->
+        <div [style.background-image]="'url('+ image.src +')'"
+             [ngClass]="{'portrait': image.portrait, 'landscape': !image.portrait}"
+             class="bgimg" [style.min-height]="category === 'buy-dialog' ? '120px' : ''"
+             (click)="onSelect(asset, category)">
+        </div>
+      </div>
+    </ngx-slick-carousel>
+
+    <mat-card-content (click)="onSelect(asset, category)">
+      <!-- TYPE & AREA -->
+      <div class="faded break-word">
+        <span class="label">{{asset.type}}</span>
+        <span class="label">• {{asset.totalArea}}<span style="text-transform: none;">m²</span></span>
+      </div>
+
+      <!-- ADDRESS  -->
+      <div class="margint-12 black">
+        <b>{{shorten(asset.address.street, 27)}}</b>
+        <div>{{shorten(asset.address.neighborhood, 16)}}, {{asset.address.city}}</div>
+      </div>
+
+
+      <!-- RENT INFO & PRICE  -->
+      <div *ngIf="asset.rented === true" class="label"
+           style="padding: 12px 0;">
+          <span class="green">
+            <fa-icon [icon]="icons.solid.checkCircle"></fa-icon>
+            Alugado
+          </span>
+        <span class="value break-word">
+                        por
+                      <span>R${{asset.rentDisplay}}</span>
+          </span>
+      </div>
+      <div *ngIf="asset.rented === false" class="label"
+           style="padding: 12px 0;">
+          <span class="accent">
+          <fa-icon [icon]="icons.solid.exclamationCircle"></fa-icon>
+          Aluguel
+          </span>
+        <span class="value">
+                          <span>R${{asset.rentDisplay}}</span>
+          </span>
+      </div>
+
+
+      <!-- ASSET MARKET VALUE  -->
+      <div *ngIf="asset.offer" class="label" [style.border-radius]="category === 'buy-dialog' ? ' 0 0 15px 15px' : '0'"
+           style="background-color: #f2f3f7; margin: 0 -16px; padding: 12px 16px;">
+          <span class="faded">
+            Valor do imóvel
+          </span>
+          <span class="value break-word">
+             <span>R${{asset.totalValue}}</span>
+          </span>
+      </div>
+
+
+      <!-- PRE-SALE FLOAT LABEL -->
+      <div *ngIf="asset.offer?.preSale" class="label float-label">
+          <span class="accent">
+            Pré-venda
+          </span>
+        <span class="break-word">até {{asset.offer.preSaleEndDate.toLocaleDateString('pt-BR')}}</span>
+      </div>
+
+      <!-- MINIMUM INVESTIMENT PRICE -->
+      <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="category === 'home'"
+           style="background-color: var(--primary); margin: 0 -17px; padding: 12px 17px; border-radius: 0 0 15px 15px">
+        <div *ngIf="asset.offer">
+          <div class="label" style="color: #f6f6f6; font-weight: 500;">investimento mínimo</div>
+          <div class="price white">
+            <b>R${{asset.offer.price * asset.offer.lot | number:'1.0-2':'pt-BR'}}</b>
+          </div>
+        </div>
+      </div>
+
+      <!--ADMIN OFFER SECTION START-->
+      <ng-container *ngIf="category === 'admin'">
+        <div class="float-pictbtn">
+          <button mat-mini-fab class="pictbtn" color="primary" matTooltip="Editar/Adicionar fotos e documentos" matTooltipClass="tooltip-font tooltip-center"
+                  (click)="openEditDialog(1)">
+            <mat-icon>add_a_photo</mat-icon>
+          </button>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center"
+             style="margin: 0 -17px; padding: 12px 17px;" [ngClass]="{'accent-bg': !asset.offer}"
+             [ngStyle]="{'background-color': !asset.offer ? 'mat-color($bricks, accent)' : 'var(--primary)'}">
+          <div *ngIf="!asset.offer" fxFlex="grow">
+            <button class="btn-sm btn-inverse" (click)="openSetupOfferDialog()">
+              Criar<Br>oferta
+            </button>
+          </div>
+          <ng-container *ngIf="asset.offer">
+            <div fxFlex="87">
+              <div class="label" style="color: #f6f6f6; font-weight: 500;">{{asset.offer.numShares}} frações</div>
+              <div class="price white break-word">
+                <b>R${{asset.offer.price | number:'1.2-2':'pt-BR'}}</b><span class="label"> / fração</span>
+              </div>
+              <div class="label" style="color: #f6f6f6; font-weight: 500; text-transform: none;">
+                Mín. {{asset.offer.lot | number:'1.2-2':'pt-BR'}} -
+                Máx. {{asset.offer.maxHolderShares | number:'1.2-2':'pt-BR'}}
+              </div>
+              <span *ngIf="asset.offer.preSale"
+                    class="label break-word" style="color: #f6f6f6; font-weight: 500; text-transform: none;">
+                          Meta pré-venda {{asset.offer.preSaleThreshold}}
+            </span>
+            </div>
+
+            <div fxFlex="13">
+              <div *ngIf="asset.offer && !asset.offer.active; else elseBlock">
+                <button mat-icon-button matTooltip="Ativar oferta" class="primary-lighter"
+                        matTooltipClass="tooltip-font"
+                        (click)="onActivateOffer(asset.recordId)">
+                  <mat-icon>done</mat-icon>
+                </button>
+              </div>
+              <ng-template #elseBlock>
+                <button mat-icon-button matTooltip="Editar oferta" class="primary-lighter"
+                        matTooltipClass="tooltip-font"
+                        (click)="onDeactivateOffer(asset.recordId)">
+                  <mat-icon>not_interested</mat-icon>
+                </button>
+              </ng-template>
+              <button mat-icon-button matTooltip="Deletar oferta" class="primary-darker" matTooltipClass="tooltip-font"
+                      (click)="onDeleteOffer(asset.recordId)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+      <!--ADMIN OFFER SECTION END-->
+    </mat-card-content>
+
+    <!--ADMIN ASSET SECTION START-->
+    <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center" *ngIf="category === 'admin'">
+      <button mat-button color="primary" matTooltip="Baixar tabela de distribuição de proventos"
+              matTooltipClass="tooltip-font"
+              (click)="onIncomePayment(asset)">
+        <mat-icon>call_split</mat-icon>
+      </button>
+      <button mat-button color="primary" matTooltip="Visitar página" matTooltipClass="tooltip-font"
+              (click)="onSelect(asset)">
+        <mat-icon>search</mat-icon>
+      </button>
+      <button mat-button color="accent" matTooltip="Editar imóvel" style="margin: 0" matTooltipClass="tooltip-font"
+              (click)="openEditDialog(0)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-button color="warn" matTooltip="Deletar imóvel" style="margin: 0" matTooltipClass="tooltip-font"
+              (click)="onDeleteAsset(asset.recordId)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-actions>
+    <!--ADMIN ASSET SECTION END-->
+  </mat-card>
+
+</ng-container>
+
+
+<!--FORMATO DE LISTA-->
+<ng-container *ngIf="format === 'list'">
+  <mat-card fxLayout="row" fxLayoutAlign="start stretch" [ngClass]="{'pointer': category === 'home'}"
+            class="asset-card-list animate__animated animate__fadeIn mat-elevation-z1">
+
+    <div fxFlex="29">
+      <div class="portrait" *ngIf="asset.gallery.length === 0" fxLayout="row" fxLayoutAlign="center center"
+           style="border-radius: 5px 0 0 4px;">
+        <div>
+          <fa-icon [icon]="icons.regular.image" size="5x" style="color: #ababab"></fa-icon>
+        </div>
+      </div>
+      <ngx-slick-carousel class="list-carousel" [config]="listConfig" *ngIf="asset.gallery.length > 0">
+        <div ngxSlickItem *ngFor="let image of asset.gallery" class="slide">
+          <div [style.background-image]="'url('+ image.src  +')'" class="bgimg-list"
+               [ngClass]="{'portrait-list': image.portrait, 'landscape-list': !image.portrait}">
+          </div>
+        </div>
+      </ngx-slick-carousel>
+    </div>
+
+    <mat-card-content fxLayout="column" fxFlex="auto" fxLayoutAlign="start start" fxLayoutGap="20px"
+                      class="assetcard-container">
+      <div>
+        <div class="faded label">
+          {{asset.type}} • {{asset.totalArea}}<span style="text-transform: none;">m²</span>
+        </div>
+      </div>
+      <div><b>{{asset.address.street}}</b>, {{asset.address.number}} - {{asset.address.neighborhood}},
+        {{asset.address.city}} - {{asset.address.state}}
+      </div>
+      <div *ngIf="asset.rented" class="label" style="margin-top: 15px">
+          <span class="green">
+            <fa-icon [icon]="icons.solid.checkCircle"></fa-icon>
+            Alugado
+          </span>
+        por R${{asset.netRent | number:'1.0-0':'pt-BR'}}
+      </div>
+      <div *ngIf="!asset.rented" class="label" style="margin-bottom: 15px">
+          <span class="accent">
+            <fa-icon [icon]="icons.solid.exclamationCircle"></fa-icon>
+            Aluguel estimado
+          </span>
+        em
+        <span class="value">R${{asset.netRent | number:'1.0-0':'pt-BR'}}</span>
+      </div>
+      <ng-container *ngIf="category === 'buy-dialog'">
+        <div class="section-row">
+          <div class="label break-word"><span class="faded">Valor do imóvel</span> R${{asset.totalValue}}</div>
+        </div>
+      </ng-container>
+      <!--ADMIN OFFER SECTION START-->
+      <ng-container *ngIf="category === 'admin'">
+        <div class="float-pictbtn-list">
+          <button mat-mini-fab class="pictbtn" color="primary" matTooltip="Editar/Adicionar fotos e documentos" matTooltipClass="tooltip-font tooltip-center"
+                  (click)="openEditDialog(1)">
+            <mat-icon>add_a_photo</mat-icon>
+          </button>
+        </div>
+        <div class="section-row" style="margin-bottom: 1px !important;" >
+          <div *ngIf="!asset.offer; else elseBlock" fxLayout="row" fxLayoutAlign="start center">
+            <div fxFlex="auto"></div>
+            <b>Nenhuma oferta criada</b>
+            <div fxFlex="auto"></div>
+            <button mat-stroked-button class="btn-sm btn-primary" (click)="openSetupOfferDialog()">
+              Criar oferta
+            </button>
+            <div fxFlex="auto"></div>
+          </div>
+          <ng-template #elseBlock>
+            <div fxLayout="row" fxLayoutAlign="start center" style="margin-left: 5px; margin-right: 5px">
+              <div fxLayout="column">
+                        <span style="margin-bottom: 5px">
+                          <b>Oferta
+                            <span *ngIf="asset.offer && asset.offer.active" class="green">ATIVA</span>
+                            <span *ngIf="asset.offer && !asset.offer.active" class="red">INATIVA</span></b>
+                        </span>
+                <span style="margin-bottom: 3px; font-weight: 500;" class="label">
+                          {{asset.offer.numShares | number:'1.2-2':'pt-BR'}}
+                  Frações - Preço: R$ {{asset.offer.price | number:'1.2-2':'pt-BR'}}
+                        </span>
+                <span style="margin-bottom: 3px; font-weight: 500; text-transform: none;" class="label">
+                          Fração Mínima: {{asset.offer.lot | number:'1.2-2':'pt-BR'}} -
+                          Fração Máxima: {{asset.offer.maxHolderShares | number:'1.2-2':'pt-BR'}}
+                        </span>
+                <span *ngIf="asset.offer?.preSale"
+                      style="margin-bottom: 3px; font-weight: 500; text-transform: none;" class="label">
+                          Pré-Venda: Encerra em {{asset.offer.preSaleEndDate.toLocaleDateString('pt-BR')}} -
+                          Valor Mínimo {{asset.offer.preSaleThreshold | number:'1.2-2':'pt-BR'}}
+                        </span>
+              </div>
+              <div fxFlex="auto"></div>
+              <div *ngIf="asset.offer && !asset.offer.active; else elseBlock">
+                <button mat-icon-button color="primary" matTooltip="Ativar oferta" matTooltipClass="tooltip-font"
+                        (click)="onActivateOffer(asset.recordId)">
+                  <mat-icon>done</mat-icon>
+                </button>
+              </div>
+              <ng-template #elseBlock>
+                <button mat-icon-button color="warn" matTooltip="Desativar oferta" matTooltipClass="tooltip-font"
+                        (click)="onDeactivateOffer(asset.recordId)">
+                  <mat-icon>not_interested</mat-icon>
+                </button>
+              </ng-template>
+              <button mat-icon-button color="warn" matTooltip="Deletar oferta" matTooltipClass="tooltip-font"
+                      (click)="onDeleteOffer(asset.recordId)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+      <!--ADMIN OFFER SECTION END-->
+    </mat-card-content>
+
+    <!--ADMIN ASSET SECTION STARTS-->
+    <mat-card-actions fxLayout="column" fxLayoutAlign="space-around center" fxFlex="60px" fxLayoutGap="3px"
+                      *ngIf="category === 'admin'">
+      <button mat-stroked-button class="circle-btn" color="primary"
+              matTooltip="Baixar tabela de distribuição de proventos"
+              matTooltipClass="tooltip-font" (click)="onIncomePayment(asset)">
+        <mat-icon>call_split</mat-icon>
+      </button>
+      <button mat-stroked-button class="circle-btn" color="primary" matTooltip="Visitar página"
+              matTooltipClass="tooltip-font"
+              (click)="onSelect(asset)">
+        <mat-icon>search</mat-icon>
+      </button>
+      <button mat-stroked-button class="circle-btn" color="accent" matTooltip="Editar imóvel"
+              matTooltipClass="tooltip-font"
+              (click)="openEditDialog(0)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-stroked-button class="circle-btn" color="warn" matTooltip="Deletar imóvel"
+              matTooltipClass="tooltip-font"
+              (click)="onDeleteAsset(asset.recordId)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-actions>
+    <!--ADMIN ASSET SECTION END-->
+  </mat-card>
+</ng-container>

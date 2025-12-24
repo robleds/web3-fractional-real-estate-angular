@@ -1,0 +1,38 @@
+.footer {
+  font-size: 13px;
+  color: #737373;
+}
+
+.footer fa-icon {
+  font-size: 16px;
+  color: #737373;
+}
+
+.footer-row {
+  min-height: 56px;
+  height: auto;
+}
+
+/*container responsive*/
+@media screen and (max-width: 576px) {
+  .footer {
+    padding: 30px 10px;
+  }
+}
+@media (min-width: 577px) and (max-width: 1049px) {
+  .footer {
+    padding: 30px 10px;
+  }
+}
+@media (min-width: 1050px) and (max-width: 1279px) {
+  .footer {
+    padding: 30px 10px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .footer {
+    padding: 30px 10px;
+  }
+}
+/*container responsive ends*/

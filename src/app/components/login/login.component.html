@@ -1,0 +1,103 @@
+<h1 mat-dialog-title fxLayoutAlign="end center" class="close-dialog" fxHide.gt-xs>
+  <button mat-icon-button (click)="dialogRef.close()">
+    <mat-icon>clear</mat-icon>
+  </button>
+</h1>
+<mat-dialog-content>
+<div class="p-grid">
+  <div class="p-lg-6 p-md-6 p-sm-12 white-bg login-panel">
+    <form [formGroup]="loginForm">
+      <div fxLayout="column" fxLayoutAlign="start strech">
+        <h5 class="subtitle hidesubtitle" fxHide.lt-sm>&nbsp;</h5>
+        <h1 class="title accent">Login</h1>
+
+        <mat-form-field>
+          <input matInput placeholder="Email" type="email" formControlName="email">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Senha" type="password" formControlName="password">
+        </mat-form-field>
+        <!--      <mat-form-field>-->
+        <!--        <mat-label>Conta do usuário</mat-label>-->
+        <!--        <mat-select formControlName="account_name">-->
+        <!--          <mat-option *ngFor="let user of availableUsers" [value]="user">-->
+        <!--            {{user}}-->
+        <!--          </mat-option>-->
+        <!--        </mat-select>-->
+        <!--      </mat-form-field>-->
+        <button mat-button type="button" color="accent" class="recoverpass-btn" (click)="sendUpdatePass()" [disabled]="updatePassSending">
+          Esqueceu a senha? Clique para recuperar
+          <mat-spinner color="accent" diameter="17" class="loader" *ngIf="updatePassSending"></mat-spinner>
+        </button>
+        <button mat-raised-button type="submit" color="accent" class="login-btn" [disabled]="loginForm.invalid || loginSending" (click)="login()">
+          ENTRAR
+          <mat-spinner color="accent" diameter="17" class="loader" *ngIf="loginSending"></mat-spinner>
+        </button>
+        <button *ngIf="loginErr === 'EMAIL_NOT_CONFIRMED' && !resent" mat-stroked-button type="button" color="warn" (click)="resendValidation()"
+                class="break-word error-btn animate__animated animate__fadeInDown animate__faster">
+          <span *ngIf="!validationResending"><fa-icon [icon]="faWarn"></fa-icon> Email ainda não confirmado.<br>Clique para reenviar validação.</span>
+          <span *ngIf="validationResending">Reenviando <mat-spinner color="accent" diameter="17" class="loader"></mat-spinner></span>
+        </button>
+        <div class="info-msg animate__animated animate__fadeInDown animate__faster" *ngIf="clickedRecoverPass && loginForm.get('email').invalid">
+          <fa-icon [icon]="faInfo"></fa-icon>  Por favor, preencha o email no campo acima e aperte recuperar novamente.
+        </div>
+        <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="updatePassErr === 'NOT_FOUND'">
+          <fa-icon [icon]="faWarn"></fa-icon>  Email não cadastrado!
+        </div>
+        <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="updatePassErr === 'e'">
+          <fa-icon [icon]="faWarn"></fa-icon>  Ops, algo deu errado! Falha ao conectar.
+        </div>
+        <div class="success-msg animate__animated animate__fadeInDown animate__faster" *ngIf="updatePassSuccess">
+          <fa-icon [icon]="faCheck"></fa-icon>  Email enviado! Abra o email para alterar a senha, não esqueça de checar também a caixa de spam ;)
+        </div>
+        <div class="success-msg animate__animated animate__fadeInDown animate__faster" *ngIf="resendSuccess">
+          <fa-icon [icon]="faCheck"></fa-icon>  Email reenviado! Por favor, cheque seu email, não esqueça de checar também a caixa de spam ;)
+        </div>
+        <div *ngIf="loginErr === 'WRONG_PASS'" class="error-badge animate__animated animate__fadeInDown animate__faster">
+          <fa-icon [icon]="faWarn"></fa-icon> Ops, senha incorreta!
+        </div>
+        <div *ngIf="loginErr === 'INVALID_USER'" class="error-badge animate__animated animate__fadeInDown animate__faster">
+          <fa-icon [icon]="faWarn"></fa-icon> Email não encontrado
+        </div>
+        <div *ngIf="loginErr === 'NA' || (resent && !resendSuccess)" class="error-badge animate__animated animate__fadeInDown animate__faster">
+          <fa-icon [icon]="faWarn"></fa-icon> Ops, algo deu errado! Falha ao conectar.
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="p-lg-6 p-md-6 p-sm-12 blue-bg login-panel">
+    <form [formGroup]="registerForm">
+      <div fxLayout="column" fxLayoutAlign="start stretch">
+        <h5 class="subtitle">Ainda não tem conta?</h5>
+        <h1 class="title">Registre-se!</h1>
+        <mat-form-field color="accent">
+          <input matInput placeholder="Email" type="email" formControlName="email">
+        </mat-form-field>
+        <mat-form-field color="accent">
+          <input matInput placeholder="Senha" type="password" formControlName="password" (blur)="passCompare()">
+        </mat-form-field>
+        <mat-form-field color="accent">
+          <input matInput placeholder="Repita a senha" type="password" formControlName="password2" (blur)="passCompare()">
+        </mat-form-field>
+        <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="!passmatch">
+          <fa-icon [icon]="faWarn"></fa-icon> As senhas não são iguais!
+        </div>
+        <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="registerErr === 'EXISTING_EMAIL'">
+          <fa-icon [icon]="faWarn"></fa-icon> Email já cadastrado!
+        </div>
+        <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="!registerSuccess && registerErr !== '' && registerErr !== 'EXISTING_EMAIL'">
+          <fa-icon [icon]="faWarn"></fa-icon> Ops, algo deu errado!
+        </div>
+        <button mat-raised-button class="accent login-btn" (click)="register()" [disabled]="registerForm.invalid || registerSending">
+          REGISTRAR
+          <mat-spinner color="accent" diameter="17" class="loader" *ngIf="registerSending"></mat-spinner>
+        </button>
+        <small style="margin-top: 22px;">Ao clicar em "REGISTRAR" você concorda com nossos Termos de Uso</small>
+        <div class="success-msg animate__animated animate__fadeInDown animate__faster" *ngIf="registerSuccess">
+          Sucesso! Por favor, cheque seu email para terminar o seu cadastro
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</mat-dialog-content>

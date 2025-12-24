@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>Comprar Frações do Imóvel</h2>
+<div mat-dialog-content>
+
+  <!-- ASSET - LIST FORMAT -->
+  <div fxLayout.lt-sm="column" fxLayoutAlign.lt-sm="center center">
+    <app-asset-card [asset]="data.asset" [format]="(HandsetPortrait$ | async) ? 'card' : 'list'" category="buy-dialog"></app-asset-card>
+
+    <div style="font-size: 13px; margin-left: 15px; color: #737373;" fxLayout="row" fxLayoutAlign="start end"
+         fxLayoutGap="5px" ngStyle.gt-xs="margin-top: 12px;" ngStyle.lt-sm="max-width: 270px;">
+      <fa-icon [icon]="icons.solid.asterisk" class="accent" style="font-size: 10px" fxFlexAlign="start"></fa-icon>
+      <span><b>{{data.asset.offer.availableBalance | number:'1.0-2':'pt-BR'}} frações</b> disponíveis para compra,
+        máximo de {{data.asset.offer.maxHolderShares}} por usuário
+    </span>
+    </div>
+  </div>
+
+
+  <div fxLayout="column" fxLayoutGap="8px">
+    <div class="balance-divider" style="margin-top: 20px; ">
+      <div class="label" style="font-weight: 700; text-align: center; font-size: 14px;">
+        PREÇO
+      </div>
+      <div style="font-size: 20px; text-align: center">
+        R${{data.asset.offer.price | number: '1.0-2':'pt-BR'}}
+        <span style="font-size: 12px;">/ fração</span>
+      </div>
+    </div>
+    <div class="margin-amount-section">
+      <div class="margint-30 text-center">Quantas frações deseja comprar? Informe a quantidade</div>
+
+      <!-- AMOUNT INPUT WITH MIN MAX BTNS -->
+      <div fxLayout="column" fxLayoutAlign="center center">
+              <span class="p-float-label">
+                <p-inputNumber inputId="inputNumber" [formControl]="amount" class="shares-input"
+                               [step]="1" [min]="data.asset.offer.lot"
+                               [max]="data.asset.offer.maxHolderShares"
+                               [showButtons]="true" [styleClass]="'p-inputtext-lg'"></p-inputNumber>
+                <label for="inputNumber">Número de frações</label>
+              </span>
+        <div style="max-width: 216px; width: 100%; margin-bottom: 8px">
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="faded" style="font-size: 12px">Selecionar:</span>
+            <div>
+              <button mat-stroked-button class="min-btn" (click)="selectMin()">
+                Mín: {{data.asset.offer.lot | number:'1.0-2':'pt-BR'}}
+              </button>
+              <button mat-stroked-button class="max-btn" (click)="selectMax()">
+                Máx: {{findMax() | number:'1.0-2':'pt-BR'}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="infos">
+        <div fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="center center"
+             class="balance-divider animate__animated animate__fadeIn"
+             fxLayout.lt-sm="column" fxLayoutAlign.lt-sm="start center" fxLayoutGap.lt-sm="12px"
+             *ngIf="amount.value !== null">
+          <div style="font-weight: 600;" fxFlex="50" class="text-center">Custo total: R${{totalCost}}</div>
+          <div fxLayout="column" fxLayoutGap="12px" fxFlex="50" ngClass.lt-sm="text-center"
+               ngStyle.gt-xs="border-left: 1px solid #dadada; padding-left: 10px;">
+            <div class="gray" style="font-size: 13px;">
+              <fa-icon [icon]="icons.solid.percentage" class="accent" style="margin-right: 3px"></fa-icon>
+              Você possuirá {{shareOwned}}% do imóvel
+            </div>
+            <div class="gray" style="font-size: 13px;">
+              <fa-icon [icon]="icons.solid.coins" class="accent" style="margin-right: 3px"></fa-icon>
+              Aluguel mensal <span *ngIf="!data.asset.rented">estimado</span> rende
+              R$ {{userRent}}
+            </div>
+            <div class="gray" style="font-size: 13px;">
+              <fa-icon [icon]="icons.solid.chart" class="accent" style="margin-right: 3px"></fa-icon>
+              Retorno estimado sobre investimento {{roi}}%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--      <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px" style="margin-top: 16px;">-->
+      <!--        <div>-->
+      <!--          <mat-form-field appearance="outline">-->
+      <!--            <mat-label>Número de frações</mat-label>-->
+      <!--            <label>-->
+
+      <!--              &lt;!&ndash;              <input matInput formControlName="amount" currencyMask&ndash;&gt;-->
+      <!--              &lt;!&ndash;                     [options]="{prefix: '', thousands: '.', decimal: ',', precision: 2, allowNegative: false, allowZero: false,&ndash;&gt;-->
+      <!--              &lt;!&ndash;                     align: 'right', nullable: true, max: data.asset.offer.availableBalance}">&ndash;&gt;-->
+
+      <!--              <input matInput style="text-align: center; font-size: 16pt" formControlName="amount" type="number"-->
+      <!--                     step="1" [min]="data.asset.offer.lot" [max]="data.asset.offer.availableBalance" autocomplete="off">-->
+
+      <!--            </label>-->
+      <!--            <mat-hint align="start" style="width: 100%;">-->
+      <!--              <button mat-stroked-button class="percentage-btn" (click)="selectMinimum()">-->
+      <!--                Selecionar mínimo: {{data.asset.offer.lot | number:'1.2-2':'pt-BR'}}-->
+      <!--              </button>-->
+      <!--            </mat-hint>-->
+      <!--          </mat-form-field>-->
+      <!--        </div>-->
+      <!--      </div>-->
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
+  <button mat-button mat-dialog-close color="warn">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="amount.invalid" (click)="buyAsset()"><b>COMPRAR</b>
+  </button>
+</div>

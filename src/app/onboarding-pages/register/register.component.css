@@ -1,0 +1,211 @@
+.client-toolbar {
+  font-size: 15px;
+  position: fixed;
+  z-index: 2;
+}
+
+::ng-deep .client-toolbar .searchbar .mat-form-field-flex {
+  padding-top: 0;
+}
+
+.client-toolbar .searchbar {
+  margin-top: 18px;
+}
+
+::ng-deep .client-toolbar .searchbar .mat-form-field-ripple {
+  background-color: var(--primary) !important;
+}
+
+.title {
+  margin-top: 25px;
+}
+
+/*.input-height-btn {*/
+/*  height: 50px;*/
+/*  margin-top: 4px;*/
+/*}*/
+
+.addBtn {
+  top: -18px;
+}
+
+.deleteBtn {
+  top: 14px;
+}
+
+.option-margin {
+  margin-left: 15px;
+}
+
+.numberSelect {
+  width: 65px;
+}
+
+.check-margin {
+  margin-right: 10px;
+  align-self: center;
+}
+
+.checked {
+  color: var(--success);
+}
+
+.question-mark {
+  margin-left: 7px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.question-mark:hover {
+  color: var(--primary-darker);
+}
+
+::ng-deep .tooltip-bigger {
+  font-size: 15px;
+  white-space: pre-line;
+  max-width: 350px !important;
+}
+
+.banckaccount-card mat-card-title {
+  font-size: 15px;
+}
+
+.banckaccount-card .mat-card-header-text {
+  margin: 0 8px;
+}
+
+.normaltext-cardtitle {
+  font-size: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  ::ng-deep .mat-horizontal-content-container {
+    padding: 0 !important;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .btn-leftmargin {
+    margin-left: 0;
+  }
+  .bankRefBtn {
+    top: -18px;
+  }
+}
+
+@media screen and (min-width: 577px) {
+  .bankRefBtn {
+    height: 53px;
+    margin-top: 2px;
+  }
+}
+
+
+@media screen and (max-width: 404px) {
+  .btn-leftmargin {
+    margin-top: 10px;
+  }
+}
+
+@media screen and (min-width: 405px) {
+  .btn-leftmargin {
+    margin-left: 15px;
+  }
+}
+
+.deleteFileBtn {
+  width: 25px;
+}
+
+.file-name-marginr {
+  margin-right: 10px;
+}
+
+.top-msg {
+  background-color: var(--primary);
+  color: white;
+  padding: 16px;
+  border-radius: 5px;
+  font-weight: 600;
+  margin: 25px 20px 22px 20px;
+}
+
+.overlay-container {
+  position: relative;
+  width: 99.34px;
+  height: 37.27px;
+}
+
+.next-btn {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.next-btn[disabled] {
+  background-color: var(--primary);
+  color: white;
+  opacity: 0.6;
+}
+
+.overlay-btn {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.phone-error-badge {
+  color: var(--warn);
+  font-size: 14px;
+  text-align: center;
+  background-color: #ffe4e4;
+  border: 1px solid #eabcbc;
+  padding: 14px 10px 8px 10px;
+  border-radius: 5px;
+  min-height: 51.4px;
+  margin-top: 3px;
+}
+
+@media screen and (max-width: 767px) {
+  .p-width {
+    width: 100%
+  }
+}
+@media screen and (min-width: 768px) {
+  .p-width {
+    width: auto;
+  }
+}
+
+
+.inline-btn {
+  height: 50.4px;
+  margin-top: 4px;
+  line-height: 18px;
+}
+
+.red-border.inline-btn {
+  border: 2px solid var(--warn);
+  height: 53.4px;
+  margin-top: 3px;
+}
+
+::ng-deep .red-border .mat-radio-outer-circle {
+  border-color: var(--warn);
+}
+
+::ng-deep .green-border .mat-form-field-outline {
+  color: var(--success);
+}
+
+::ng-deep .green-border .mat-form-field-outline-thick {
+  color: var(--success) !important;
+}

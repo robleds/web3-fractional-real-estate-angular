@@ -1,0 +1,75 @@
+<div class="container-dash animate__animated animate__fadeIn animate__faster">
+  <mat-card class="header table-card mat-elevation-z0" style="margin-top: 60px">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="table-card-header">
+      <h3 class="table-title faded">Imóveis</h3>
+      <button mat-raised-button class="buttonLight" (click)="openAddAssetDialog()"
+              matTooltip="Cadastre os imóveis" matTooltipClass="tooltip-font">
+        <mat-icon matSuffix>add</mat-icon>&nbsp;<span>CADASTRAR IMÓVEL</span>
+      </button>
+    </div>
+
+    <mat-card-content>
+      <p-dataView #dv class="assets-table" *ngIf="assetsService.loaded" [value]="assetsService.assets" layout="grid" [paginator]="true"
+                  [rows]="20" paginatorPosition="both" [filterBy]="'type,address.neighborhood,address.city,address.state'">
+        <p-header>
+          <div class="p-helper-clearfix">
+            <div class="p-grid">
+              <div class="p-col-12 p-md-4">
+                <mat-form-field>
+                  <mat-label>Organizar por</mat-label>
+                  <mat-select>
+                    <mat-option>
+                      Mais recentes
+                    </mat-option>
+                    <mat-option>
+                      Mais antigos
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="p-col-6 p-md-4 filter-container">
+                <div style="position:relative">
+                  <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">
+                    <label>
+                      <input matInput type="text" #filterField placeholder="Pesquisar" (input)="dv.filter(filterField.value, 'contains')">
+                    </label>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="p-col-6 p-md-4" style="text-align:right">
+                <div [ngClass]="'p-dataview-layout-options p-selectbutton p-buttonset'">
+                  <a tabindex="0" class="p-button p-button-icon-only p-state-default"
+                     *ngIf="!disableList" matTooltip="Visão em lista" matTooltipClass="tooltip-font"
+                     (click)="changeLayout($event, 'list')" (keydown.enter)="changeLayout($event, 'list')"
+                     [ngClass]="{'p-state-active': dv.layout === 'list'}">
+                    <i class="pi pi-bars p-button-icon-left"></i>
+                  </a>
+                  <a tabindex="0" class="p-button p-button-icon-only p-state-default"
+                     *ngIf="!disableList" matTooltip="Visão em grade" matTooltipClass="tooltip-font"
+                     (click)="changeLayout($event, 'grid')" (keydown.enter)="changeLayout($event, 'grid')"
+                     [ngClass]="{'p-state-active': dv.layout === 'grid'}">
+                    <i class="pi pi-th-large p-button-icon-left"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-header>
+
+        <!--LIST VIEW-->
+        <ng-template let-asset pTemplate="listItem" let-i="rowIndex">
+          <div fxLayout="column" class="animate__animated animate__fadeIn" style="width: 100%">
+            <app-asset-card [asset]="asset" format="list" category="admin" ></app-asset-card>
+          </div>
+        </ng-template>
+
+        <!--GRID VIEW-->
+        <ng-template let-asset pTemplate="gridItem">
+          <div class="p-col-12 p-md-6 p-lg-4 p-xl-3" style="margin-bottom: 18px;">
+            <app-asset-card [asset]="asset" format="card" category="admin" ></app-asset-card>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </mat-card-content>
+  </mat-card>
+</div>

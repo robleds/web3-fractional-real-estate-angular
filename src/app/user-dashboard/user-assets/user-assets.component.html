@@ -1,0 +1,307 @@
+<div class="container-dash animate__animated animate__fadeIn animate__faster wallet-page">
+
+  <mat-card class="header table-card mat-elevation-z4" style="margin-top: 30px">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="table-card-header">
+      <span class="subtitle">Meus Imóveis</span>
+    </div>
+
+    <mat-card-content>
+
+      <p-dataView #dv class="assets-table" *ngIf="assetsData.length > 0" [value]="assetsData" layout="list"
+                  [paginator]="true"
+                  [rows]="20" paginatorPosition="both"
+                  [filterBy]="'type,address.neighborhood,address.city,address.state'">
+        <p-header>
+          <div class="p-helper-clearfix">
+            <div class="p-grid">
+              <div class="p-col-12 p-md-4">
+                <mat-form-field>
+                  <mat-label>Organizar por</mat-label>
+                  <mat-select>
+                    <mat-option>
+                      Mais recentes
+                    </mat-option>
+                    <mat-option>
+                      Mais antigos
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="p-col-6 p-md-4 filter-container">
+                <div style="position:relative">
+                  <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">
+                    <label>
+                      <input matInput type="text" #filterField placeholder="Pesquisar"
+                             (input)="dv.filter(filterField.value, 'contains')">
+                    </label>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="p-col-6 p-md-4" style="text-align:right">
+                <div [ngClass]="'p-dataview-layout-options p-selectbutton p-buttonset'">
+                  <a tabindex="0" class="p-button p-button-icon-only p-state-default"
+                     *ngIf="!disableList" matTooltip="Visão em lista" matTooltipClass="tooltip-font"
+                     (click)="changeLayout($event, 'list')" (keydown.enter)="changeLayout($event, 'list')"
+                     [ngClass]="{'p-state-active': dv.layout === 'list'}">
+                    <i class="pi pi-bars p-button-icon-left"></i>
+                    <span class="p-button-text p-clickable">p-btn</span>
+                  </a>
+                  <a tabindex="0" class="p-button p-button-icon-only p-state-default"
+                     *ngIf="!disableList" matTooltip="Visão em grade" matTooltipClass="tooltip-font"
+                     (click)="changeLayout($event, 'grid')" (keydown.enter)="changeLayout($event, 'grid')"
+                     [ngClass]="{'p-state-active': dv.layout === 'grid'}">
+                    <i class="pi pi-th-large p-button-icon-left"></i>
+                    <span class="p-button-text p-clickable">p-btn</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-header>
+
+        <!--LIST VIEW-->
+        <ng-template let-assetData pTemplate="listItem" let-i="rowIndex">
+          <div *ngIf="assetData.asset" fxLayout="column" class="animate__animated animate__fadeIn" style="width: 100%">
+            <mat-card fxLayout="row" fxLayoutAlign="start center"
+                      class="asset-card-list animate__animated animate__fadeIn mat-elevation-z1"
+                      [class.first-card]="i===0">
+              <!--ASSET IMAGES-->
+              <div fxFlex="29">
+                <ngx-slick-carousel class="list-carousel" [config]="slideConfig">
+                  <div ngxSlickItem *ngFor="let image of assetData.asset.gallery" class="slide">
+                    <div [style.background-image]="'url('+ image.src  +')'" class="bgimg-list"
+                         [ngClass]="{'portrait-list': image.portrait, 'landscape-list': !image.portrait}">
+                    </div>
+                  </div>
+                </ngx-slick-carousel>
+              </div>
+
+              <!--CARD CONTENT-->
+              <mat-card-content fxLayout="column" fxFlex="auto" fxLayoutAlign="start start" fxLayoutGap="20px"
+                                class="assetcard-container">
+                <div>
+                  <div class="faded label">
+                    {{assetData.asset.type}} • {{assetData.asset.totalArea | number:'1.2-2':'pt-BR'}}m²
+                  </div>
+                </div>
+                <div><b>{{assetData.asset.address.street}}</b>, {{assetData.asset.address.number}} -
+                  {{assetData.asset.address.neighborhood}}, {{assetData.asset.address.city}} - {{assetData.asset.address.state}}
+                </div>
+                <div *ngIf="assetData.asset.rented" class="label section-row" style="margin-top: 15px">
+                  <span class="green">
+                    <fa-icon [icon]="['fas','check-circle']"></fa-icon>
+                    Alugado
+                  </span>
+                  por R${{assetData.asset.netRent | number:'1.2-2':'pt-BR'}}
+                </div>
+                <div *ngIf="!assetData.asset.rented" class="label section-row" style="margin-bottom: 15px">
+                  <span class="accent">
+                    <fa-icon [icon]="['fas','exclamation-circle']"></fa-icon>
+                    Aluguel estimado
+                  </span>
+                  em
+                  <span class="value">R${{assetData.asset.netRent | number:'1.2-2':'pt-BR'}}</span>
+                </div>
+                <div class="section-row" *ngIf="assetData.asset.offer.preSale">
+                  Em pré-venda até {{assetData.asset.offer.preSaleEndDate.toLocaleDateString('pt-BR')}}
+                </div>
+                <div class="section-row">
+                  <div *ngIf="assetData.balance.balance !== 0 && assetData.balance.balance === 1">
+                    Saldo: {{assetData.balance.balance}} fração de um total de {{assetData.asset.supply}}
+                  </div>
+                  <div *ngIf="assetData.balance.balance !== 0 && assetData.balance.balance > 1">
+                    Saldo: {{assetData.balance.balance}} frações de um total de {{assetData.asset.supply}}
+                  </div>
+                  <div *ngIf="assetData.balance.pendingBalance !== 0 && assetData.balance.pendingBalance === 1">
+                    Saldo pendente: {{assetData.balance.pendingBalance}} fração
+                  </div>
+                  <div *ngIf="assetData.balance.pendingBalance !== 0 && assetData.balance.pendingBalance > 1">
+                    Saldo pendente: {{assetData.balance.pendingBalance}} frações
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <!--ACTIONS ON SIDE-->
+              <mat-card-actions fxLayout="column" fxLayoutAlign="space-around center" fxFlex="60px" fxLayoutGap="3px">
+                <button mat-stroked-button class="circle-btn" color="primary" matTooltip="Visitar página"
+                        matTooltipClass="tooltip-font"
+                        (click)="onSelect(assetData.asset)">
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </ng-template>
+
+        <!--GRID VIEW-->
+        <ng-template let-assetData pTemplate="gridItem">
+          <div class="p-col-12 p-md-6 p-lg-4 p-xl-3" style="margin-bottom: 18px;">
+            <mat-card class="asset-card-grid animate__animated animate__fadeIn">
+              <!--ASSET IMAGES-->
+              <ngx-slick-carousel class="grid-carousel" #slickImagesGrid="slick-carousel" [config]="slideConfig"
+                                  [ngClass]="{'showArrow': assetData.asset.showArrow, 'hideArrow': !assetData.asset.showArrow}">
+                <div ngxSlickItem *ngFor="let image of assetData.asset.gallery; let j = index"
+                     (mouseenter)="onMouseEnter($event,assetData.asset)"
+                     (mouseleave)="onMouseLeave($event,assetData.asset)">
+                  <div [style.background-image]="'url('+ image.src +')'"
+                       [ngClass]="{'portrait-grid': image.portrait, 'landscape-grid': !image.portrait}" class="bgimg">
+                  </div>
+                </div>
+              </ngx-slick-carousel>
+
+              <!--CARD CONTENT-->
+              <mat-card-content>
+                <div class="faded">
+                  <span class="label">{{assetData.asset.type}} • {{assetData.asset.totalArea | number: '1.2-2': 'pt-BR'}}m²</span>
+                </div>
+                <div class="margint-12 black">
+                  <b>{{shorten(assetData.asset.address.street, 27)}}</b>, {{assetData.asset.address.number}}
+                  <div>{{shorten(assetData.asset.address.neighborhood, 16)}},  {{assetData.asset.address.city}}
+                    - {{assetData.asset.address.state}}</div>
+                </div>
+                <div *ngIf="assetData.asset.rented === true" class="label"
+                     style="background-color: #f2f3f7; margin: 0 -16px; padding: 12px 16px;">
+                  <span class="green">
+                    <fa-icon [icon]="['fas','check-circle']"></fa-icon>
+                    Alugado
+                  </span>
+                  <span class="value">
+                    por
+                    <span>R${{assetData.asset.netRent | number:'1.2-2':'pt-BR'}}</span>
+                  </span>
+                </div>
+                <div *ngIf="assetData.asset.rented === false" class="label"
+                     style="background-color: #f2f3f7; margin: 0 -16px; padding: 12px 16px;">
+                    <span class="accent">
+                    <fa-icon [icon]="['fas','exclamation-circle']"></fa-icon>
+                    Aluguel
+                    </span>
+                  <span class="value">
+                        <span>R${{assetData.asset.netRent | number:'1.2-2':'pt-BR'}}</span>
+                  </span>
+                </div>
+                <div style="background-color: #f2f3f7; margin: 0 -16px; padding: 12px 16px;" *ngIf="assetData.asset.offer.preSale">
+                  Em pré-venda até {{assetData.asset.offer.preSaleEndDate.toLocaleDateString('pt-BR')}}
+                </div>
+                <div style="background-color: #f2f3f7; margin: 0 -16px; padding: 12px 16px;">
+                  <div *ngIf="assetData.balance.balance !== 0">
+                    Saldo: {{assetData.balance.balance}} / {{assetData.asset.supply}}
+                  </div>
+                  <div *ngIf="assetData.balance.pendingBalance !== 0 && assetData.balance.pendingBalance === 1">
+                    Saldo pendente: {{assetData.balance.pendingBalance}} fração
+                  </div>
+                  <div *ngIf="assetData.balance.pendingBalance !== 0 && assetData.balance.pendingBalance > 1">
+                    Saldo pendente: {{assetData.balance.pendingBalance}} frações
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <!--ACTIONS ON BOTTOM-->
+              <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center">
+                <button mat-button color="primary" matTooltip="Visitar página" matTooltipClass="tooltip-font"
+                        (click)="onSelect(assetData.asset)">
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </ng-template>
+      </p-dataView>
+
+<!--      <p-table [value]="assetsBalance" [rows]="10" dataKey="name" [responsive]="true" [scrollable]="true"-->
+<!--               scrollHeight="342px">-->
+<!--        <ng-template pTemplate="caption">-->
+<!--          <div style="text-align: left">-->
+<!--            <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">-->
+<!--              <input type="text" matInput placeholder="Pesquisar...">-->
+<!--              <fa-icon matSuffix [icon]="['fas', 'search']" size="lg"></fa-icon>-->
+<!--            </mat-form-field>-->
+<!--          </div>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="header" let-columns>-->
+<!--          <tr>-->
+<!--            <th pSortableColumn="record_id" pResizableColumn>-->
+<!--              Número de Registro-->
+<!--              <p-sortIcon field="record_id"></p-sortIcon>-->
+<!--            </th>-->
+<!--            <th pSortableColumn="shares" pResizableColumn>-->
+<!--              Cotas-->
+<!--              <p-sortIcon field="shares"></p-sortIcon>-->
+<!--            </th>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="body" let-rowData let-columns="columns">-->
+<!--          <tr [pSelectableRow]="rowData" (click)="onSelect(rowData['record_id'])">-->
+<!--            <td>-->
+<!--              {{rowData['record_id']}}-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              {{rowData['balance']}}-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+<!--      </p-table>-->
+    </mat-card-content>
+  </mat-card>
+
+<!--  <mat-card class="header table-card mat-elevation-z4" style="margin-top: 40px">-->
+<!--    <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="table-card-header">-->
+<!--      <span class="subtitle">Transações</span>-->
+<!--    </div>-->
+<!--    <mat-card-content>-->
+<!--      <p-table [value]="transactions" [rows]="10" dataKey="name" [responsive]="true" [scrollable]="true"-->
+<!--               scrollHeight="342px">-->
+
+<!--        <ng-template pTemplate="caption">-->
+<!--          <div style="text-align: left">-->
+<!--            <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">-->
+<!--              <input type="text" matInput placeholder="Pesquisar...">-->
+<!--              <fa-icon matSuffix [icon]="['fas', 'search']" size="lg"></fa-icon>-->
+<!--            </mat-form-field>-->
+<!--          </div>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="header" let-columns>-->
+<!--          <tr>-->
+<!--            <th pSortableColumn="id" style="width: 160px" pResizableColumn>-->
+<!--              #-->
+<!--              <p-sortIcon field="id"></p-sortIcon>-->
+<!--            </th>-->
+<!--            <th pSortableColumn="record_id" pResizableColumn>-->
+<!--              Número de Registro-->
+<!--              <p-sortIcon field="record_id"></p-sortIcon>-->
+<!--            </th>-->
+<!--            <th pSortableColumn="shares" pResizableColumn>-->
+<!--              Cotas-->
+<!--              <p-sortIcon field="shares"></p-sortIcon>-->
+<!--            </th>-->
+<!--            <th pSortableColumn="value" pResizableColumn>-->
+<!--              Valor-->
+<!--              <p-sortIcon field="value"></p-sortIcon>-->
+<!--            </th>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="body" let-rowData let-columns="columns">-->
+<!--          <tr [pSelectableRow]="rowData">-->
+<!--            <td style="width: 160px">-->
+<!--              {{rowData['id']}}-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              {{rowData['record_id']}}-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              {{rowData['shares']}}-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              {{rowData['value']}}-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+
+<!--      </p-table>-->
+<!--    </mat-card-content>-->
+<!--  </mat-card>-->
+</div>

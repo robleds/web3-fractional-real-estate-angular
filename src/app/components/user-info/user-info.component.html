@@ -1,0 +1,131 @@
+<h2 mat-dialog-title>Informações do usuário</h2>
+<div mat-dialog-content>
+  <form [formGroup]="userForm">
+
+    <h2 class="title">Sobre</h2>
+    <div class="p-grid">
+      <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-col-12">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="firstName" readonly>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="p-lg-6 p-md-7 p-col-12">
+        <mat-label>Sobrenome completo</mat-label>
+        <input matInput formControlName="lastName" readonly>
+      </mat-form-field>
+    </div>
+
+    <div formGroupName="pf" *ngIf="data.user.accType === 1"
+         class="animate__animated animate__fadeIn">
+      <h2 class="title">Pessoa Física</h2>
+      <div class="p-grid">
+        <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-sm-6 p-col-12">
+          <mat-label>CPF</mat-label>
+          <input matInput placeholder="CPF" formControlName="cpf" mask="000.000.000-00" readonly>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-sm-6 p-col-12">
+          <mat-label>Nascimento</mat-label>
+          <input matInput formControlName="birthday" readonly>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div formGroupName="pj" *ngIf="data.user.accType === 2"
+         class="animate__animated animate__fadeIn">
+      <h2 class="title">Pessoa Jurídica</h2>
+      <div class="p-grid">
+        <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-col-12">
+          <mat-label>CNPJ</mat-label>
+          <input matInput placeholder="CNPJ" formControlName="cnpj" mask="00.000.000/0000-00" readonly>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="p-lg-6 p-md-7 p-col-12">
+          <mat-label>Razão Social</mat-label>
+          <input matInput formControlName="legalEntityName" readonly>
+        </mat-form-field>
+      </div>
+
+      <h3 class="title">Sócios Administradores</h3>
+          <div class="p-grid" formArrayName="managers">
+            <ng-container *ngFor="let manager of managers.controls; let i = index">
+              <ng-container [formGroup]="manager">
+
+                <mat-form-field appearance="outline" class="p-lg-6 p-md-5 p-sm-12 p-col-12">
+                  <mat-label>Nome *</mat-label>
+                  <input matInput formControlName="name" readonly>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="p-lg-3 p-md-3 p-sm-5 p-col-10">
+                  <mat-label>RG *</mat-label>
+                  <input matInput placeholder="RG" formControlName="rg" readonly>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="p-lg-3 p-md-3 p-sm-5 p-col-10">
+                  <mat-label>CPF *</mat-label>
+                  <input matInput placeholder="CPF" formControlName="cpf" mask="000.000.000-00" readonly>
+                </mat-form-field>
+
+              </ng-container>
+            </ng-container>
+          </div>
+    </div>
+
+
+    <h2 class="title">Endereço</h2>
+    <div class="p-grid" formGroupName="address">
+      <mat-form-field appearance="outline" class="p-lg-3 p-md-4 p-sm-6 p-col-12">
+        <mat-label>País</mat-label>
+        <input matInput placeholder="País" formControlName="country" readonly>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="p-lg-3 p-md-4 p-sm-6 p-col-12">
+        <mat-label>CEP</mat-label>
+        <input matInput placeholder="CEP" formControlName="zip_code" mask="00000-000" readonly>
+      </mat-form-field>
+      <ng-container>
+        <mat-form-field class="p-lg-2 p-md-4 p-sm-6 p-col-12" appearance="outline">
+          <mat-label>Estado</mat-label>
+          <input matInput placeholder="Estado" formControlName="state" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-4 p-md-6 p-sm-6 p-col-12" appearance="outline">
+          <mat-label>Cidade</mat-label>
+          <input matInput placeholder="Cidade" formControlName="city" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-3 p-md-6 p-sm-6 p-col-12"
+                        appearance="outline">
+          <mat-label>Bairro</mat-label>
+          <input matInput placeholder="Bairro" formControlName="neighborhood" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-4 p-md-6 p-sm-6 p-col-12"
+                        appearance="outline">
+          <mat-label>Rua</mat-label>
+          <input matInput placeholder="Rua" formControlName="street" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-2 p-md-3 p-sm-6 p-col-12"
+                        appearance="outline">
+          <mat-label>Número</mat-label>
+          <input matInput placeholder="Número" formControlName="number" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-3 p-md-3 p-sm-6 p-col-12"
+                        appearance="outline">
+          <mat-label>Complemento</mat-label>
+          <input matInput placeholder="Complemento" formControlName="complement" readonly>
+        </mat-form-field>
+      </ng-container>
+    </div>
+
+    <div>
+      <h2 class="title animate__animated animate__fadeIn">
+        Contato
+      </h2>
+      <div class="p-grid">
+        <mat-form-field class="p-lg-3 p-md-4 p-sm-6 p-col-8" appearance="outline">
+          <mat-label>Celular</mat-label>
+          <input matInput placeholder="Com DDD" formControlName="phone" mask="(00) 00000-0000" readonly>
+        </mat-form-field>
+        <mat-form-field class="p-lg-4 p-md-6 p-sm-6 p-col-12"
+                        appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" formControlName="email" readonly>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</div>

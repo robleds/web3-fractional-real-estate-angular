@@ -1,0 +1,708 @@
+<div class="h-100vh" fxLayout="column" fxLayoutAlign="start stretch">
+  <mat-toolbar *ngIf="!updateMode" class="client-toolbar">
+    <mat-toolbar-row fxLayoutAlign="center center">
+      <!--    <mat-icon class="hamburger" *ngIf="isHandset$ | async">menu</mat-icon>-->
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+        <img src="assets/logo.png" style="width: 100px; cursor: pointer" routerLink="/home"/>
+        <!--      <h2 style="cursor: pointer" routerLink="/home" class="primary-darker">BRICKS</h2>-->
+        <!--      <mat-form-field appearance="fill" class="searchbar" ngStyle.gt-md="width: 250px">-->
+        <!--        <input type="text" matInput placeholder="Pesquisar...">-->
+        <!--        <fa-icon matSuffix [icon]="faSearch" style="color: #888888;"></fa-icon>-->
+        <!--      </mat-form-field>-->
+      </div>
+      <div>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div style="padding-top: 80px; flex: 1">
+    <div class="container-lg">
+      <mat-horizontal-stepper linear="true" #stepper>
+        <mat-step [stepControl]="registerForm">
+          <form [formGroup]="registerForm">
+            <ng-template matStepLabel>Dados</ng-template>
+            <!--          <div class="p-grid">-->
+            <div *ngIf="!updateMode" class="top-msg animate__animated animate__fadeInDown">
+              Email validado com sucesso! Complete seu cadastro abaixo:
+            </div>
+            <!--          </div>-->
+            <mat-card class="mat-elevation-z1 animate__animated animate__fadeIn animate__faster" style="margin: 20px">
+              <mat-card-content>
+                <h2 class="title">Sobre</h2>
+                <div class="p-grid">
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-col-12">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="firstName" required>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="p-lg-6 p-md-7 p-col-12">
+                    <mat-label>Sobrenome completo</mat-label>
+                    <input matInput formControlName="lastName" required>
+                  </mat-form-field>
+                  <div class="p-lg-12" style="margin-bottom: 13px">
+                    <label>Tipo de cadastro: </label>
+                    <mat-radio-group formControlName="type"
+                                     [ngClass]="{'red-border': (registerForm.get('type').invalid && clickedCheckForm)}">
+                      <mat-radio-button value="pf" class="option-margin">Pessoa física</mat-radio-button>
+                      <mat-radio-button value="pj" class="option-margin">Pessoa jurídica</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+
+                <div formGroupName="pf" *ngIf="registerForm.get('type').value === 'pf'"
+                     class="animate__animated animate__fadeIn">
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-sm-6 p-col-12">
+                    <mat-label>CPF *</mat-label>
+                    <input matInput placeholder="CPF" formControlName="cpf" mask="000.000.000-00">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-sm-6 p-col-12">
+                    <mat-label>Nascimento *</mat-label>
+                    <input matInput appDateMask [matDatepicker]="picker" #dateOfBirth formControlName="birthday">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+
+                <div formGroupName="pj" *ngIf="registerForm.get('type').value === 'pj'"
+                     class="animate__animated animate__fadeIn">
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-5 p-col-12">
+                    <mat-label>CNPJ *</mat-label>
+                    <input matInput placeholder="CNPJ" formControlName="cnpj" mask="00.000.000/0000-00"
+                           (blur)="searchCNPJ(registerForm.get('pj.cnpj').value)">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="p-lg-6 p-md-7 p-col-12">
+                    <mat-label>Razão Social</mat-label>
+                    <input matInput formControlName="legalEntityName" required>
+                  </mat-form-field>
+
+                  <h2 class="title">Sócios Administradores</h2>
+                  <div class="p-grid" formArrayName="managers">
+                    <ng-container *ngFor="let manager of managers.controls; let i = index">
+                      <ng-container [formGroup]="manager">
+
+                        <mat-form-field appearance="outline" class="p-lg-5 p-md-5 p-sm-12 p-col-12">
+                          <mat-label>Nome *</mat-label>
+                          <input matInput formControlName="name">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="p-lg-3 p-md-3 p-sm-5 p-col-10">
+                          <mat-label>RG *</mat-label>
+                          <input matInput placeholder="RG" formControlName="rg">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="p-lg-2 p-md-3 p-sm-5 p-col-10">
+                          <mat-label>CPF *</mat-label>
+                          <input matInput placeholder="CPF" formControlName="cpf" mask="000.000.000-00"
+                                 (blur)="checkUniqueManagers()">
+                        </mat-form-field>
+
+                        <button mat-icon-button type="button" *ngIf="i > 0" color="warn" class="deleteBtn"
+                                (click)="removeManager(i)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </ng-container>
+                    </ng-container>
+                    <div class="p-lg-12">
+                      <button mat-flat-button type="button" color="primary" class="addBtn" (click)="addManager()">
+                        <fa-icon [icon]="faPlus" style="margin-right: 5px"></fa-icon>
+                        Adicionar outro sócio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+
+                <h2 class="title">Endereço</h2>
+                <div class="p-grid" formGroupName="address">
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-4 p-sm-6 p-col-12">
+                    <mat-label>País</mat-label>
+                    <input matInput placeholder="País" formControlName="country" required>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="p-lg-3 p-md-4 p-sm-6 p-col-12">
+                    <mat-label>CEP</mat-label>
+                    <input matInput placeholder="CEP" formControlName="zip_code" mask="00000-000"
+                           (blur)="searchCEP(registerForm.get('address.zip_code').value)" required>
+                  </mat-form-field>
+                  <ng-container *ngIf="hasZipCode">
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-2 p-md-4 p-sm-6 p-col-12">
+                      <mat-label>Estado *</mat-label>
+                      <mat-select formControlName="state">
+                        <mat-option *ngFor="let state of states" [value]="state['sigla']"
+                                    (onSelectionChange)="searchCities(state['id'])">
+                          {{state['sigla']}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-4 p-md-6 p-sm-6 p-col-12">
+                      <mat-label>Cidade *</mat-label>
+                      <mat-select formControlName="city">
+                        <mat-option *ngFor="let city of cities" [value]="city['nome']">
+                          {{city['nome']}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-3 p-md-6 p-sm-6 p-col-12"
+                                    appearance="outline">
+                      <mat-label>Bairro</mat-label>
+                      <input matInput placeholder="Bairro" formControlName="neighborhood" required>
+                    </mat-form-field>
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-4 p-md-6 p-sm-6 p-col-12"
+                                    appearance="outline">
+                      <mat-label>Rua</mat-label>
+                      <input matInput placeholder="Rua" formControlName="street" required>
+                    </mat-form-field>
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-2 p-md-3 p-sm-6 p-col-12"
+                                    appearance="outline">
+                      <mat-label>Número</mat-label>
+                      <input matInput placeholder="Número" formControlName="number" required>
+                    </mat-form-field>
+                    <mat-form-field class="animate__animated animate__fadeInLeft p-lg-3 p-md-3 p-sm-6 p-col-12"
+                                    appearance="outline">
+                      <mat-label>Complemento</mat-label>
+                      <input matInput placeholder="Complemento" formControlName="complement">
+                    </mat-form-field>
+                  </ng-container>
+                </div>
+
+                <div class="animate__animated animate__fadeIn">
+                  <h2 class="title animate__animated animate__fadeIn">
+                    Contato
+                  </h2>
+                  <div class="p-grid">
+                    <mat-form-field class="p-lg-3 p-md-3 p-sm-6 p-col-8" appearance="outline"
+                                    [ngClass]="{'green-border': codeIsValid}">
+                      <mat-label>Celular</mat-label>
+                      <input matInput placeholder="Com DDD" formControlName="phone" mask="(00) 00000-0000" required
+                             [readonly]="codeIsValid">
+                    </mat-form-field>
+
+                    <div class="p-lg-fixed p-md-fixed p-sm-6 p-col-4" style="width: auto" *ngIf="!codeIsValid">
+                      <button mat-flat-button type="button" color="primary" class="inline-btn"
+                              [ngClass]="{'red-border': (!codeSent && clickedCheckForm)}"
+                              [disabled]="registerForm.controls.phone.invalid" (click)="sendPhoneCode()">
+                        Enviar<Br>código
+                      </button>
+                    </div>
+
+                    <div class="p-lg-fixed p-md-fixed p-sm-6 p-col-12 p-width" *ngIf="sendCodeErr !== ''">
+                      <div *ngIf="sendCodeErr === 'e'"
+                           class="phone-error-badge animate__animated animate__fadeInLeft animate__faster">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        Ops, algo deu errado!
+                      </div>
+                      <div *ngIf="sendCodeErr === 'RATE_LIMITED'"
+                           class="phone-error-badge animate__animated animate__fadeInLeft animate__faster">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        Tente novamente em 60 segundos
+                      </div>
+                      <div *ngIf="sendCodeErr === 'ALREADY_VALIDATED'"
+                           class="phone-error-badge animate__animated animate__fadeInLeft animate__faster">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        Celular já validado!
+                      </div>
+                      <div *ngIf="sendCodeErr === 'INTERNAL_ERROR'"
+                           class="phone-error-badge animate__animated animate__fadeInLeft animate__faster">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        <span
+                          class="break-word"> Erro interno, por favor entre em contato com alguem da nossa equipe</span>
+                      </div>
+                    </div>
+
+                    <mat-form-field class="p-lg-3 p-md-3 p-sm-6 p-col-8 animate__animated animate__fadeInLeft"
+                                    appearance="outline" *ngIf="codeSent && !codeIsValid">
+                      <mat-label>Código de Validação</mat-label>
+                      <input matInput placeholder="000000" formControlName="code" mask="000000" required>
+                    </mat-form-field>
+
+                    <div class="p-col" *ngIf="codeIsValid">
+                      <mat-icon class="check-margin checked animate__animated animate__fadeInLeft"
+                                style="margin-top: 14px;">check_circle
+                      </mat-icon>
+                    </div>
+                    <div class="p-col-fixed" style="width: auto" *ngIf="!codeIsValid && codeErr !== ''">
+                      <div class="phone-error-badge animate__animated animate__fadeInLeft animate__faster"
+                           *ngIf="codeErr !== 'TIMEOUT'">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        Código inválido
+                      </div>
+                      <div class="phone-error-badge animate__animated animate__fadeInLeft animate__faster"
+                           *ngIf="codeErr === 'TIMEOUT'">
+                        <fa-icon [icon]="faWarn"></fa-icon>
+                        Código expirado
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="animate__animated animate__fadeIn" *ngIf="registerForm.get('type').value === 'pf'">
+                  <h2 class="title animate__animated animate__fadeIn" *ngIf="registerForm.get('type').value === 'pf'">
+                    Informações adicionais</h2>
+                  <div class="p-grid" formGroupName="questions">
+                    <div class="p-lg-12">
+                      <label>É investidor regular em imóveis?</label>
+                      <mat-radio-group formControlName="isRegularInvestor"
+                                       [ngClass]="{'red-border': (registerForm.get('questions.isRegularInvestor').invalid && clickedCheckForm)}">
+                        <mat-radio-button value="1" class="option-margin">Sim</mat-radio-button>
+                        <mat-radio-button value="0" class="option-margin">Não</mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                    <div class="p-lg-12">
+                      <label>Qual o seu nível de entendimento do mercado imobiliário? 1 a 5, sendo 1 nenhum e 5
+                        investidor profissional</label>
+                      <mat-form-field appearance="fill" class="numberSelect option-margin" floatLabel="never">
+                        <mat-select formControlName="marketExpLevel" placeholder="--">
+                          <mat-option value="1">1</mat-option>
+                          <mat-option value="2">2</mat-option>
+                          <mat-option value="3">3</mat-option>
+                          <mat-option value="4">4</mat-option>
+                          <mat-option value="5">5</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="p-lg-12">
+                      <label>Possui imóvel próprio?</label>
+                      <mat-radio-group formControlName="isPropOwner"
+                                       [ngClass]="{'red-border': (registerForm.get('questions.isPropOwner').invalid && clickedCheckForm)}">
+                        <mat-radio-button value="1" class="option-margin">Sim</mat-radio-button>
+                        <mat-radio-button value="0" class="option-margin">Não</mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                    <div class="p-lg-12">
+                      <label>Qual a faixa do seu patrimônio financeiro?</label>
+                      <mat-form-field appearance="fill" floatLabel="never" class="option-margin">
+                        <mat-select formControlName="patrimonyLevel" placeholder="--">
+                          <mat-option value="1">R$ 50.000 a R$ 100.000</mat-option>
+                          <mat-option value="2">De 100.001 a R$ 500.000</mat-option>
+                          <mat-option value="3">De R$ 500.001 a R$ 1.000.000</mat-option>
+                          <mat-option value="4">Acima de R$ 1.000.000.001</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-grid">
+                  <div class="p-lg-2">
+                    <div class="overlay-container">
+                      <button type="button" mat-flat-button class="next-btn" color="primary"
+                              [disabled]="registerForm.invalid"
+                              (click)="submitUserData(stepper)">
+                        Próximo
+                        <fa-icon [icon]="faChevronRight"></fa-icon>
+                      </button>
+                      <div *ngIf="registerForm.invalid" class="overlay-btn" (click)="checkForm()"
+                           matTooltip="Ops, ainda falta preencher alguns campos! Clique para indentificá-los"
+                           matTooltipPosition="right" matTooltipClass="tooltip-bigger"></div>
+                    </div>
+                  </div>
+                  <div class="p-lg-10">
+                    <div *ngIf="registerErr !== ''"
+                         class="error-badge animate__animated animate__fadeInRight animate__faster">
+                      <fa-icon [icon]="faWarn"></fa-icon>
+                      Ops, algo deu errado!
+                    </div>
+                  </div>
+                  <div class="p-lg-12">Ao clicar em "Próxmo" você atesta que leu e concorda com os <a>termos e
+                    condições</a> da Brix BR
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </form>
+        </mat-step>
+
+
+        <!--2o Passo - documentos-->
+        <mat-step [stepControl]="docStep">
+          <ng-template matStepLabel>Documentos</ng-template>
+          <mat-card class="mat-elevation-z0 animate__animated animate__fadeIn animate__faster" style="margin: 20px">
+            <mat-card-content>
+
+              <ng-container *ngIf="!updateMode">
+                <h2>Eba, estamos quase lá!</h2>
+                <h3>Você já está cadastrado na Brix,<span style="font-weight: normal"> mas para comprar e vender imóveis precisamos de mais algumas informações suas ;) </span>
+                </h3>
+                <h3 style="margin-bottom: 30px"><span
+                  style="font-weight: normal">Você pode deixar essa etapa para depois,</span> mas você não poderá
+                  concluir
+                  nenhuma compra ou venda sem essas informações.</h3>
+              </ng-container>
+
+              <ng-container *ngIf="updateMode">
+                <h2>Enviar documentos</h2>
+              </ng-container>
+
+              <mat-accordion class="example-headers-align" multi>
+
+                <ng-container *ngIf="isPF">
+                  <!--Documento com foto-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Documento com foto*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 matTooltip="RG, passaporte ou carteira de motorista"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-icon *ngIf="!photoId.valid" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="photoId.valid" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+                    <app-upload #photoId type="2" category="photoId" limit="1"
+                                isPrivate="true" [sizeLimit]="10485760" isUnique="true"
+                                [control]="pfDocsForm.get('photoId')">
+                    </app-upload>
+
+                  </mat-expansion-panel>
+                  <!--Comprovante residência-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Comprovante de residência*
+                      </mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                      <mat-icon *ngIf="!proofOfResidence.valid" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="proofOfResidence.valid" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+
+                    <app-upload #proofOfResidence type="2" category="proofOfResidence" limit="1"
+                                isPrivate="true" [sizeLimit]="10485760" isUnique="true"
+                                [control]="pfDocsForm.get('proofOfResidence')">
+                    </app-upload>
+                  </mat-expansion-panel>
+                  <!--Comprovante de estado civil-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Comprovante de estado civil*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 [matTooltip]="'- Solteiro: certidão de nascimento;' + '\n' + '- Casado: certidão de casamento, com o regime de bens averbado' + '\n' + '- União estável: escritura pública;' + '\n' + '- Divorciado: certidão de casamento, com o divórcio averbado'"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                      <mat-icon *ngIf="!maritalStatus.valid" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="maritalStatus.valid" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+                    <app-upload #maritalStatus type="2" category="maritalStatus" limit="5"
+                                isPrivate="true" [sizeLimit]="10485760" isUnique="true"
+                                [control]="pfDocsForm.get('maritalStatus')">
+                    </app-upload>
+                  </mat-expansion-panel>
+                </ng-container>
+
+                <ng-container *ngIf="!isPF">
+                  <!--Cartão CNPJ-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Cartão CNPJ*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 matTooltip="Também conhecido como Comprovante de Inscrição e de Situação Cadastral"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-icon *ngIf="!cnpjCard.valid" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="cnpjCard.valid" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+                    <app-upload #cnpjCard type="2" category="cnpjCard" limit="1"
+                                isPrivate="true" [sizeLimit]="10485760" isUnique="true"
+                                [control]="pjDocsForm.get('cnpjCard')">
+                    </app-upload>
+                  </mat-expansion-panel>
+                  <!--Contrato social-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Contrato social*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 matTooltip="e suas alterações, registrados na junta comercial"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-icon *ngIf="!socialContract.valid" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="socialContract.valid" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+                    <app-upload #socialContract type="2" category="socialContract" limit="3"
+                                isPrivate="true" [sizeLimit]="10485760" isUnique="false"
+                                [control]="pjDocsForm.get('socialContract')">
+                    </app-upload>
+                  </mat-expansion-panel>
+                  <!--identificação do(s) representante(s) legal(is)-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Identificação dos representantes legais*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 [matTooltip]="'Documento com foto dos representantes legais' + '\n' + 'e atos que comprovam a sua eleição/designação caso não conste no contrato social'"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                      <mat-icon *ngIf="!validManagerDocs" class="check-margin">
+                        radio_button_unchecked
+                      </mat-icon>
+                      <mat-icon *ngIf="validManagerDocs" class="check-margin checked">
+                        check_circle
+                      </mat-icon>
+                    </mat-expansion-panel-header>
+
+                    <div *ngFor="let manager of managersIds; let i = index"
+                         [ngStyle]="{'margin-top': i >= 1 ? '20px' : '5px'}"
+                         fxLayout.gt-sm="row" fxLayout.lt-md="column" fxLayoutAlign.gt-sm="start center"
+                         fxLayoutAlign.lt-md="center start"
+                         fxLayoutGap="10px">
+                      <div fxFlex.gt-xs="30" fxFlex.lt-md="100">
+                        {{pjDocsForm.get(manager).value.name}}
+                        <br>
+                        {{pjDocsForm.get(manager).value.cpf}}
+                      </div>
+                      <app-upload type="2" [category]="manager"
+                                  isPrivate="true" [sizeLimit]="10485760" isUnique="false"
+                                  [control]="pjDocsForm.get(manager).get('docs')">
+                      </app-upload>
+                    </div>
+
+                    <!--                  <div style="margin-top: 20px"-->
+                    <!--                       fxLayout.gt-sm="row" fxLayout.lt-md="column" fxLayoutAlign.gt-sm="start center" fxLayoutAlign.lt-md="center start"-->
+                    <!--                       fxLayoutGap="10px">-->
+                    <!--                    <mat-form-field appearance="outline" fxFlex.gt-xs="30" fxFlex.lt-md="100" fxFlexAlign.gt-xs="end">-->
+                    <!--                      <mat-label>Nome do representante</mat-label>-->
+                    <!--                      <input matInput formControlName="representative" required>-->
+                    <!--                    </mat-form-field>-->
+                    <!--                    <app-upload type="2" category="managerId"-->
+                    <!--                                isPrivate="true" [sizeLimit]="10485760" isUnique="false"-->
+                    <!--                                [control]="pjDocsForm.get('managerId')">-->
+                    <!--                    </app-upload>-->
+                    <!--                  </div>-->
+
+                    <!--                  <div class="p-grid" style="margin-top: 30px">-->
+                    <!--                    <div class="p-col-12">-->
+                    <!--                      <button mat-flat-button type="button" color="primary" class="addBtn" (click)="addBankReference()">-->
+                    <!--                        <fa-icon [icon]="faPlus" style="margin-right: 5px"></fa-icon>-->
+                    <!--                        Adicionar mais um representante-->
+                    <!--                      </button>-->
+                    <!--                    </div>-->
+                    <!--                  </div>-->
+
+                  </mat-expansion-panel>
+                </ng-container>
+
+                <br>
+
+                <form [formGroup]="bankAccForm">
+                  <!--Conta para recebimento-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Conta para recebimento*
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 matTooltip="Conta para distribuição de proventos e/ou recebimento de aluguel"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                      <mat-icon *ngIf="bankAccForm.invalid" class="check-margin">radio_button_unchecked</mat-icon>
+                      <mat-icon *ngIf="bankAccForm.valid" class="check-margin checked">check_circle</mat-icon>
+                    </mat-expansion-panel-header>
+                    <div class="p-grid">
+
+                      <mat-form-field class="p-lg-6 p-md-12 p-sm-12 p-col-12" appearance="outline"
+                                      (click)="setSearch(bankInput.value)">
+                        <mat-label>Banco</mat-label>
+                        <input #bankInput (mouseover)="searchBanks()" (input)="bankSearchInput.next($event)" matInput
+                               formControlName="bank"
+                               [matAutocomplete]="auto" required>
+                        <mat-hint>Digite para pesquisar</mat-hint>
+                        <mat-autocomplete #auto="matAutocomplete">
+                          <mat-option *ngFor="let bank of filteredBanks | async"
+                                      [value]="bank.code + ' - ' + bank.name">
+                            {{bank.code}} - {{bank.name}}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+
+
+                      <mat-form-field appearance="outline" class="p-lg-2 p-md-3 p-sm-5 p-col-12">
+                        <mat-label>Agência</mat-label>
+                        <input matInput formControlName="branch" required>
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="p-lg-4 p-md-5 p-sm-7 p-col-12">
+                        <mat-label>Conta</mat-label>
+                        <input matInput formControlName="account" required>
+                        <mat-hint *ngIf="!isPF">
+                          <mat-icon>error_outline</mat-icon>
+                          A conta deve pertencer ao CNPJ da empresa
+                        </mat-hint>
+                        <mat-hint *ngIf="isPF">
+                          <mat-icon>error_outline</mat-icon>
+                          A conta deve pertencer ao seu CPF
+                        </mat-hint>
+                      </mat-form-field>
+                      <div class="p-lg-12" style="margin-bottom: 13px" *ngIf="isPF">
+                        <label>Tipo de conta: </label>
+                        <mat-radio-group formControlName="type">
+                          <mat-radio-button value="corrente" class="option-margin">Corrente</mat-radio-button>
+                          <mat-radio-button value="poupança" class="option-margin">Poupança</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                      <div class="p-lg-12" style="margin-bottom: 13px" *ngIf="isPF">
+                        <label>Vinculo da conta: </label>
+                        <mat-radio-group formControlName="joint">
+                          <mat-radio-button value="individual" class="option-margin">Conta individual</mat-radio-button>
+                          <mat-radio-button value="conjunta" class="option-margin">Conta Conjunta</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                      <mat-form-field appearance="outline" *ngIf="isPF && isJoint"
+                                      class="p-lg-4 p-md-5 p-sm-12 p-col-12 animate__animated animate__fadeInLeft animate__faster">
+                        <mat-label>Nome do segundo titular</mat-label>
+                        <input matInput formControlName="otherOwner" required>
+                      </mat-form-field>
+                    </div>
+                  </mat-expansion-panel>
+                  <!--Referências bancárias-->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Referências bancárias
+                        <fa-icon [icon]="faQuestionCircle" class="question-mark"
+                                 matTooltip="Outros bancos e agências que você possui conta para que possamos checar suas referências bancárias"
+                                 matTooltipPosition="right" matTooltipClass="tooltip-bigger"></fa-icon>
+                      </mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                      <mat-icon *ngIf="!bankRefValid" class="check-margin">radio_button_unchecked</mat-icon>
+                      <mat-icon *ngIf="bankRefValid" class="check-margin checked">check_circle</mat-icon>
+                    </mat-expansion-panel-header>
+                    <div class="p-grid" formArrayName="bankReferences">
+                      <ng-container *ngFor="let bankRef of bankRefs.controls; let i = index">
+                        <ng-container [formGroup]="bankRef">
+                          <mat-form-field appearance="outline" class="p-lg-6 p-md-7 p-sm-7 p-col-12"
+                                          (click)="setSearch(bankInput.value)">
+                            <mat-label>Banco</mat-label>
+                            <input #bankInput (mouseover)="searchBanks()" (input)="bankSearchInput.next($event)"
+                                   matInput formControlName="bank"
+                                   [matAutocomplete]="auto2">
+                            <mat-autocomplete #auto2="matAutocomplete">
+                              <mat-option *ngFor="let bank of filteredBanks | async"
+                                          [value]="bank.code + ' - ' + bank.name">
+                                {{bank.code}} - {{bank.name}}
+                              </mat-option>
+                            </mat-autocomplete>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline" class="p-lg-2 p-md-4 p-sm-3 p-col-10">
+                            <mat-label>Agencia</mat-label>
+                            <input matInput formControlName="branch">
+                          </mat-form-field>
+                          <button mat-icon-button type="button" *ngIf="i > 0" color="warn" class="deleteBtn"
+                                  (click)="removeBankRef(i)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </ng-container>
+                      </ng-container>
+                      <div class="p-col-12">
+                        <button mat-flat-button type="button" color="primary" class="addBtn"
+                                (click)="addBankReference()">
+                          <fa-icon [icon]="faPlus" style="margin-right: 5px"></fa-icon>
+                          Adicionar mais uma referência
+                        </button>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </form>
+              </mat-accordion>
+            </mat-card-content>
+
+            <div style="margin-top: 30px">
+              <button mat-flat-button color="accent" type="button" (click)="skip()">Pular
+                <fa-icon [icon]="faSkip"></fa-icon>
+              </button>
+              <button mat-flat-button color="primary" type="button" class="option-margin"
+                      [disabled]="bankAccForm.invalid || (isPF && pfDocsForm.invalid) || (!isPF && pjDocsForm.invalid)"
+                      (click)="submitDocsForm()">
+                Enviar
+                <fa-icon [icon]="faChevronRight"></fa-icon>
+              </button>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" *ngIf="uploadErr !== ''">
+              <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="uploadErr === 'e'">
+                <fa-icon [icon]="faWarn"></fa-icon>
+                Ops, algo deu errado! Erro de conexão.
+              </div>
+              <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="uploadErr !== 'e'">
+                <fa-icon [icon]="faWarn"></fa-icon>
+                Ops, algo deu errado! Erro:  {{uploadErr}}
+              </div>
+            </div>
+          </mat-card>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Validação</ng-template>
+          <mat-card class="mat-elevation-z0 animate__animated animate__fadeIn animate__faster" style="margin: 20px">
+            <mat-card-content ngStyle.lt-sm="text-align: center">
+              <h2>Cadastro concluído!</h2>
+              <h3 *ngIf="!sentDocs">Não se esqueça de enviar sua documentação depois para formalizar compras e
+                vendas.<span
+                  style="font-weight: normal"> Você pode fazer isso a qualquer momento no menu "minha conta".</span>
+              </h3>
+              <h3 *ngIf="sentDocs">Sua documentação será verificada<span style="font-weight: normal"> e você receberá um email de confirmação.</span>
+              </h3>
+              <h3><span style="font-weight: normal">Enquanto isso, você já pode explorar nossa plataforma ;)</span></h3>
+              <!--            <div class="p-grid" style="margin-top: 30px">-->
+              <!--              <div class="p-col-12 p-sm p-md p-xl">-->
+              <button mat-flat-button color="primary" type="button" routerLink="/home">
+                <img src="assets/symbol3.png/" style="width: 22px; margin-right: 5px; margin-bottom: 4px;">
+                Acessar a Brix
+              </button>
+              <!--              </div>-->
+              <!--              <div  class="p-col-12 p-sm p-md p-lg p-xl">-->
+              <button mat-flat-button color="accent" class="btn-leftmargin" type="button"
+                      routerLink="/user/update-info/1">
+                <mat-icon style="font-size: 20px;">account_circle</mat-icon>
+                Minha conta
+              </button>
+              <!--              </div>-->
+              <!--            </div>-->
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+
+      </mat-horizontal-stepper>
+    </div>
+  </div>
+
+  <div *ngIf="loading"
+       style="position: absolute; left: 0; right: 0; bottom: 0; top: 0; background-color: white; padding-top: 120px; text-align: center"
+       fxLayout="row" fxLayoutAlign="center start">
+    <div fxLayout="column">
+      <mat-progress-spinner style="margin: 20px" color="primary" diameter="50"
+                            mode="indeterminate"></mat-progress-spinner>
+      <h4>carregando...</h4>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

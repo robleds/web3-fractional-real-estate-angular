@@ -1,0 +1,463 @@
+/*container responsive*/
+.container-mobile {
+  margin-left: auto;
+  margin-right: auto;
+  /*padding: 30px 16px;*/
+  max-width: 460px;
+}
+
+@media screen and (max-width: 599px) {
+  ::ng-deep .banner-swiper .swiper-button-next, ::ng-deep .banner-swiper .swiper-button-prev {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .container-banner {
+    padding: 30px 15px;
+  }
+  .text-box {
+    padding: 20px 10px 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+}
+@media (min-width: 577px) and (max-width: 1049px) {
+  .container-banner {
+    padding: 30px 60px;
+  }
+  .text-box {
+    padding: 20px 60px 35px;
+    margin-top: 25px;
+    margin-bottom: 60px;
+  }
+}
+@media (min-width: 1050px) and (max-width: 1279px) {
+  .container-banner {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 70px;
+    max-width: 1024px;
+    min-width: 1024px
+  }
+  .text-box {
+    padding: 20px 60px 35px;
+    margin-top: 25px;
+    margin-bottom: 60px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-banner {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 0;
+    max-width: 1200px;
+    min-width: 1110px
+  }
+  .text-box {
+    padding: 20px 60px 35px;
+    margin-top: 25px;
+    margin-bottom: 60px;
+  }
+}
+/*container responsive ends*/
+
+.text-box {
+  border: 1px solid #ececec;
+  border-radius: 5px;
+  margin-left: 8px;
+}
+
+.parallax-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 417px;
+  -webkit-background-size: cover;
+  background-size: cover !important;
+  background-position: center;
+  background: rgb(80 80 80 / 65%);
+  background-blend-mode: darken;
+  max-height: 100%;
+  height: 100%;
+}
+
+::ng-deep .banner-swiper .swiper-slide {
+  min-height: 417px !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+}
+
+::ng-deep .banner-swiper .swiper-button-next, ::ng-deep .banner-swiper .swiper-button-prev {
+  color: var(--primary);
+}
+
+::ng-deep .banner-swiper .swiper-button-next:hover, ::ng-deep .banner-swiper .swiper-button-prev:hover {
+  opacity: 0.7;
+}
+
+::ng-deep .banner-swiper .swiper-container-horizontal>.swiper-pagination-progressbar {
+  bottom: 0;
+  top: unset;
+}
+
+::ng-deep .banner-swiper .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  background: var(--primary);
+}
+
+.discover-btn:hover fa-icon {
+  -webkit-transition: margin-left 0.3s;
+  transition: margin-left  0.3s;
+}
+
+.discover-btn:hover fa-icon {
+  margin-left: 5px;
+}
+
+.discover-btn {
+  font-size: 16px;
+  margin-top: 5px;
+  -webkit-transition: opacity 0.5s;
+  transition: opacity  0.5s;
+}
+
+@media screen and (min-width: 600px) {
+  .discover-btn {
+    min-width: 341px;
+  }
+}
+
+.discover-btn:hover {
+  opacity: 0.9;
+}
+
+/*SLICK CARDS CAROUSEL START*/
+/*::ng-deep .cards-carousel > .slick-prev {*/
+/*  left: 0;*/
+/*  z-index: 1;*/
+/*}*/
+
+/*::ng-deep .cards-carousel > .slick-next {*/
+/*  right: 0;*/
+/*  z-index: 1;*/
+/*}*/
+
+/*bola contorno da direita*/
+/*::ng-deep .cards-carousel > .slick-next:before {*/
+/*  content: "";*/
+/*  position: absolute;*/
+/*  left: 25px;*/
+/*  border: solid 1px #e0e0e0;*/
+/*  border-radius: 50%;*/
+/*  height: 50px;*/
+/*  width: 50px;*/
+/*  transform: translateY(-50%);*/
+/*  -webkit-transform: translateY(-50%);*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*hover da bola contorno direita*/
+/*::ng-deep .cards-carousel > .slick-next:hover:before, ::ng-deep .cards-carousel > .slick-next:focus:before {*/
+/*}*/
+
+/*setinha de avançar - para direita*/
+/*::ng-deep .cards-carousel > .slick-next::after {*/
+/*  content: "\f105";*/
+/*  font-family: "Font Awesome 5 Pro";*/
+/*  font-weight: 400;*/
+/*  color: #424242;*/
+/*  font-size: 25px;*/
+/*  position: relative;*/
+/*  cursor: pointer;*/
+/*  left: 42px;*/
+/*  -webkit-transition-duration: 0.3s;*/
+/*  transition-duration: 0.3s;*/
+/*  -webkit-transition-property: color;*/
+/*  transition-property: color;*/
+/*}*/
+
+/*hover da setinha de avançar*/
+/*::ng-deep .cards-carousel > .slick-next:hover:after {*/
+/*  color: #1b9ad1;*/
+/*}*/
+
+/*bola contorno esquerda*/
+/*::ng-deep .cards-carousel > .slick-prev:before {*/
+/*  content: "";*/
+/*  position: absolute;*/
+/*  right: 25px;*/
+/*  border: solid 1px #e0e0e0;*/
+/*  border-radius: 50%;*/
+/*  height: 50px;*/
+/*  width: 50px;*/
+/*  transform: translateY(-50%);*/
+/*  -webkit-transform: translateY(-50%);*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*hover da bola contorno esquerda*/
+/*::ng-deep .cards-carousel > .slick-prev:focus:before, ::ng-deep .slick-prev:hover:before {*/
+/*}*/
+
+/*setinha de voltar - para esquerda*/
+/*::ng-deep .cards-carousel > .slick-prev::after {*/
+/*  content: "\f104";*/
+/*  font-family: "Font Awesome 5 Pro";*/
+/*  font-weight: 400;*/
+/*  color: #424242;*/
+/*  font-size: 25px;*/
+/*  right: 42px;*/
+/*  -webkit-transition-duration: 0.3s;*/
+/*  transition-duration: 0.3s;*/
+/*  -webkit-transition-property: color;*/
+/*  transition-property: color;*/
+/*  position: relative;*/
+/*}*/
+
+/*hover da setinha de voltar*/
+/*::ng-deep .cards-carousel > .slick-prev:hover:after {*/
+/*  color: #1b9ad1;*/
+/*}*/
+
+/*::ng-deep  .cards-carousel > .slick-list {*/
+/*  margin-right: 0;*/
+/*}*/
+/*SLICK CARDS CAROUSEL END*/
+
+
+/*TYPOGRAPHY STARTS*/
+.title {
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  margin-top: 0;
+}
+
+.section-title {
+  margin: 0 0 14px 11px;
+}
+
+.dark-blur {
+  color: transparent;
+  text-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;
+}
+
+.light-blur {
+  color: transparent;
+  text-shadow: rgba(240, 240, 240, 0.5) 0 0 5px;
+}
+
+/*TYPOGRAPHY ENDS*/
+
+/*.seemore-anim {*/
+/*  visibility: hidden;*/
+/*  position: fixed;*/
+/*}*/
+
+/*.value:hover .seemore-anim {*/
+/*  visibility: visible;*/
+/*  -webkit-animation: fadeInLeft 0.5s;*/
+/*  animation: fadeInLeft 0.5s;*/
+/*}*/
+
+/*.arrowright-anim {*/
+/*  visibility: hidden;*/
+/*}*/
+
+/*.asset-card:hover .arrowright-anim {*/
+/*  visibility: visible;*/
+/*  -webkit-animation: fadeIn 0.5s;*/
+/*  animation: fadeIn 0.5s;*/
+/*}*/
+
+::ng-deep .carousel-parent .p-carousel .p-carousel-dots-container .p-carousel-dot-item.p-state-highlight .p-carousel-dot-icon {
+  background-color: var(--primary);
+}
+
+::ng-deep .carousel-parent .p-carousel-item {
+  overflow-x: hidden;
+}
+
+::ng-deep .lessthan4 .p-carousel-dots-container {
+  display: none;
+}
+
+/*bola contorno da direita*/
+::ng-deep .swiper-button-next-outside {
+  border: solid 1px #e0e0e0;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+}
+
+/*setinha de avançar - para direita*/
+::ng-deep .swiper-button-next-outside fa-icon {
+  color: #424242;
+  cursor: pointer;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: color;
+  transition-property: color;
+  position: relative;
+  left: 41%;
+  top: 27%;
+}
+
+/*hover das setinhas*/
+::ng-deep .swiper-button-next-outside:hover fa-icon, .swiper-button-prev-outside:hover fa-icon {
+  color: #1b9ad1;
+}
+
+/*bola contorno esquerda*/
+::ng-deep .swiper-button-prev-outside {
+  border: solid 1px #e0e0e0;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+}
+
+/*setinha de voltar - para esquerda*/
+::ng-deep .swiper-button-prev-outside fa-icon {
+  color: #424242;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: color;
+  transition-property: color;
+  position: relative;
+  left: 37%;
+  top: 27%;
+}
+
+::ng-deep .assets-swiper .swiper-button-prev, ::ng-deep .assets-swiper .swiper-button-next {
+  display: none !important;
+}
+
+@media screen and (max-width: 715px) {
+  ::ng-deep .swiper-button-prev-outside,
+  ::ng-deep  .swiper-button-next-outside {
+    display: none;
+  }
+  ::ng-deep .assets-swiper .swiper-pagination {
+    display: none;
+  }
+  .hide-on-715 {
+    display: none;
+  }
+  .text-box {
+    margin-right: 10px;
+  }
+}
+@media screen and (min-width: 716px) {
+  ::ng-deep .assets-swiper .swiper-wrapper {
+    padding-bottom: 40px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .negative-margin {
+    margin: 0 -15px 0 -10px;
+  }
+}
+@media screen and (min-width: 577px) {
+  .negative-margin {
+    margin: 0 -50px 0 -40px;
+  }
+}
+
+::ng-deep .swiper-pagination-bullet-active {
+  background: var(--primary) !important;
+  border: none !important;
+}
+
+::ng-deep .swiper-pagination-bullet:only-child {
+  display: none !important;
+}
+
+@media screen and (min-width: 959px) {
+  ::ng-deep .swiper-center-elements .swiper-wrapper {
+    justify-content: center;
+  }
+}
+
+::ng-deep .assets-swiper .swiper-slide {
+  max-width: 279.5px !important;
+  overflow-x: hidden !important;
+}
+
+::ng-deep .swiper-button-prev-outside.swiper-button-disabled, .swiper-button-next-outside.swiper-button-disabled {
+  opacity: .35;
+  cursor: auto;
+  pointer-events: none;
+}
+
+
+/*INFO ICON START*/
+.info-icon {
+  font-size: 12px;
+  top: -2px;
+  position: relative;
+  left: 9px;
+}
+
+.dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.pulse {
+  background: #00a6de;
+  border-radius: 50%;
+  box-shadow: 0 0 0 rgba(0, 166, 222, 0.5);
+  animation: pulse 2s infinite;
+  width: 22px;
+  height: 22px;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 166, 222, 0.5);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(0, 166, 222, 0.5);
+    box-shadow: 0 0 0 0 rgba(0, 166, 222, 0.5);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+    box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+    box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
+/*INFO ICON END*/
+
+.round-btn {
+  border-radius: 20px;
+  font-size: 15px;
+  padding: 4px 23px;
+  font-weight: 600;
+  text-transform: uppercase;
+  -webkit-transition: opacity 0.5s;
+  transition: opacity  0.5s;
+}
+
+.round-btn:hover {
+  opacity: 0.95;
+}

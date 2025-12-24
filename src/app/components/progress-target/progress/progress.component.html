@@ -1,0 +1,13 @@
+<div #parent class="progress-container">
+  <div class="background-bar"></div>
+  <div [style.width.px]="barWidth" [style.background-color]="barColor" class="indicator-bar"></div>
+  <div [style.left.px]="barWidth/2" class="indicator-pct">{{progressPct}}</div>
+  <ng-container *ngFor="let target of targets">
+    <div [style.left.px]="(target.value / max) * totalWidth" class="target-marker"></div>
+    <div [style.left.px]="(target.value / max) * totalWidth" class="target-label">{{target.label}}</div>
+  </ng-container>
+</div>
+<!--<div>total: {{totalWidth}}px</div>-->
+<!--<div>filled: {{value}}/{{max}}</div>-->
+<!--<div>percentage: {{progressPct}}</div>-->
+

@@ -1,0 +1,29 @@
+<mat-toolbar class="footer">
+<!--  <div fxLayout.gt-xs="row" fxLayoutAlign="space-between center" class="container-lg" fxLayoutAlign.lt-sm="column">-->
+  <mat-toolbar-row class="container-lg footer-row" fxLayout.gt-xs="row wrap" fxLayoutAlign.gt-xs="space-between center"
+                   fxLayout.lt-sm="column" fxLayoutAlign.lt-sm="start center" fxLayoutGap.lt-sm="10px">
+<!--    <div >-->
+      <div fxLayout="column" fxFlex.gt-xs="200px">
+        <div>Parceiro de certificação cartorial</div>
+        <a href="https://e-cartoriorj.com.br/" target="_blank">
+          <img src="assets/ecartorio-logo.png" style="width: 200px"/>
+        </a>
+      </div>
+      <div>© Brix BR 2020</div>
+      <div fxLayout="row" fxLayoutAlign="center center" fxFlex.gt-xs="200px">
+        <button mat-icon-button>
+          <fa-icon [icon]="icons.solid.facebook"></fa-icon>
+        </button>
+        <button mat-icon-button>
+          <fa-icon [icon]="icons.solid.instagram"></fa-icon>
+        </button>
+        <button mat-icon-button>
+          <fa-icon [icon]="icons.solid.twitter"></fa-icon>
+        </button>
+        <button mat-icon-button>
+          <fa-icon [icon]="icons.solid.linkedin"></fa-icon>
+        </button>
+      </div>
+<!--    </div>-->
+  </mat-toolbar-row>
+</mat-toolbar>

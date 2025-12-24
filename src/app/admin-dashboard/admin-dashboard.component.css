@@ -1,0 +1,216 @@
+/*SIDENAV STARTS*/
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+@media (max-width: 600px) {
+  .sidenav-content {
+    margin-left: 0 !important;
+  }
+}
+@media (min-width: 940px) and (max-width: 960px) {
+  .sidenav-content {
+    margin-left: 0 !important;
+  }
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-sidenav {
+  background: linear-gradient(to bottom, #2d104c 0%, #2d104c 100%);
+  color: #e8ebed;
+  box-shadow: -3px 0 11px black;
+  overflow-x: hidden;
+  border-right: none;
+}
+
+.sidenav-top {
+  flex: 0 1 auto;
+  padding-bottom: 0;
+}
+
+.sidenav-bottom {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+}
+
+.sidenav-menu {
+  color: #e8ebed;
+}
+
+/*sidenav itens starts*/
+.mat-nav-list fa-icon {
+  margin-right: 17px;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.mat-list-base .mat-list-item {
+  height: 50px;
+  margin: 7px 0;
+}
+
+.mat-list-item {
+  letter-spacing: 1px;
+}
+
+.mat-list-base .mat-list-item {
+  color: #e8ebed;
+}
+
+.mat-list-item.active {
+  color: white !important;
+  font-weight: 700;
+  background-color: var(--primary);
+}
+/*sidenav itens end*/
+/*SIDENAV ENDS*/
+
+/*TOOLBAR STARTS*/
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.toolbar-icon {
+  padding: 0 10px;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto
+}
+
+/*user dropdown starts*/
+.menu-icon {
+  margin-right: 11px;
+  margin-bottom: 3px;
+}
+/*user dropdown ends*/
+
+/*TOOLBAR ENDS*/
+
+::ng-deep .mat-drawer-inner-container {
+  overflow-x: hidden !important;
+}
+
+::ng-deep .mat-drawer-container {
+  background-color: white;
+}
+
+::ng-deep .sidenav-content.mat-drawer-content {
+  overflow-x: hidden;
+}
+
+.hamburger:hover {
+  cursor: pointer;
+  color: white;
+}
+
+/*DATAVIEW DETAILS START*/
+::ng-deep body .p-selectbutton .p-button.p-state-active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+::ng-deep body .p-paginator .p-paginator-pages .p-paginator-page.p-state-active {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+::ng-deep body .p-selectbutton .p-button.p-state-active:not(.p-state-disabled):hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/*::ng-deep body .p-dataview .p-dataview-header {*/
+/*  border-radius: 0 !important;*/
+/*}*/
+/*DATAVIEW DETAILS END*/
+
+::ng-deep .table-card {
+  padding: 0 !important;
+}
+
+::ng-deep  .table-card-header {
+  padding: 16px !important;
+}
+
+::ng-deep .table-card .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+/*TABLE MODIFICATIONS START*/
+.table-title {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+::ng-deep body .container-dash .p-table .p-table-thead > tr > th {
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  background-color: #fafafa;
+}
+
+::ng-deep body .container-dash .p-table .p-table-caption, body .p-table .p-table-summary {
+  background-color: #fafafa;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+::ng-deep body .container-dash .p-table .p-sortable-column.p-state-highlight {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+::ng-deep body .container-dash .p-table .p-table-tbody > tr {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+::ng-deep body .container-dash .p-table .p-table-tbody > tr > td {
+  background-color: inherit;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  text-align: center;
+}
+
+::ng-deep body .container-dash .p-table .p-table-tbody > tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+::ng-deep body .container-dash .p-paginator {
+  background-color: #fafafa;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 0;
+}
+
+::ng-deep body .container-dash .p-paginator .p-paginator-pages .p-paginator-page.p-state-active {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+::ng-deep body .container-dash .p-table .p-table-tbody > tr:nth-child(even).p-state-highlight {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+::ng-deep body .container-dash .p-table .p-table-tbody > tr.p-state-highlight {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+/*TABLE MODIFICATIONS END*/
+
+.admin-toolbar {
+  min-height: 56px;
+  height: auto;
+}

@@ -1,0 +1,113 @@
+<div style="height: 100%;">
+  <!--  <ngx-slick-carousel class="header-carousel" #slickHeader [config]="headerSlideConfig" (afterChange)="onAfterChange()">-->
+  <!--    <div ngxSlickItem *ngFor="let image of asset.homeGallery">-->
+  <!--      <div [style.background-image]="'url('+ image.src +'_sm.jpg)'"-->
+  <!--           [ngClass]="{'portrait': image.portrait, 'landscape': !image.portrait}" class="bgimg" (click)="onSelect(asset)">-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </ngx-slick-carousel>-->
+  <div fxLayout="column" fxLayoutAlign="start stretch">
+    <swiper [config]="bannerConfig" #banner class="banner-swiper">
+      <div *ngFor="let asset of activeOfferAssets" fxLayout="column" fxLayoutAlign="end stretch"
+           class="animate__animated animate__fadeIn">
+        <div class="container-banner">
+
+          <div class="parallax-bg" [style.background-image]="'url('+ asset.gallery[0].src +')'"
+               data-swiper-parallax="0%"></div>
+          <h1 class="banner-title white" data-swiper-parallax="-400">{{asset.title}}</h1>
+          <div class="banner-address white" data-swiper-parallax="-300">
+            <fa-icon [icon]="icons.solid.marker"></fa-icon>
+            <b> {{asset.address.neighborhood}}, {{asset.address.city}} - {{asset.address.state}}</b>
+          </div>
+          <div class="banner-description white" data-swiper-parallax="-200">
+            <p>{{shortenDesc(asset.description, 150)}}</p>
+          </div>
+          <div>
+            <button mat-flat-button color="primary" data-swiper-parallax="-200" class="discover-btn"
+                    (click)="onSelect(asset, 'home')">
+              <div fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="start center" fxLayoutGap.gt-xs="15px"
+                   fxLayout.lt-sm="column" fxLayoutAlign.lt-sm="center center" fxLayoutGap.lt-sm="3px">
+                <div *ngIf="asset.offer" fxLayout="column" fxLayoutAlign="center center">
+                  <div class="label" style="color: #f6f6f6; font-weight: 500; margin-bottom: -14px;">investimento
+                    inicial
+                  </div>
+                  <div class="price white">
+                    <b>R${{asset.minCost}}</b>
+                  </div>
+                </div>
+                <span style="height: 37px; border: 1px solid #dedede;" fxHide.lt-sm></span>
+                <span style="width: 100%; border: 1px solid #dedede;" fxHide.gt-xs></span>
+                <span>Descobrir mais
+              <fa-icon [icon]="icons.solid.chevronRight"></fa-icon>
+            </span>
+              </div>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </swiper>
+  </div>
+  <div class="container-lg">
+    <div class="p-grid">
+      <div class="p-col-12 text-center animate__animated animate__fadeIn">
+        <h1 class="black">Venda fracionada de imóveis</h1>
+        <h2 class="subtitle faded">Acesse oportunidades que só estavam disponíveis para os grandes desse mercado</h2>
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px"
+         class="negative-margin animate__animated animate__fadeIn">
+      <div fxFlex="50px" class="hide-on-715"></div>
+      <div fxFlex="grow" class="text-box">
+        <h4>
+          <span class="dot pulse">
+            <fa-icon [icon]="icons.solid.info" class="info-icon white"></fa-icon>
+          </span>
+          Sobre nós
+        </h4>
+
+        <div>A Brix BR é a primeira plataforma no Brasil de venda fracionada de imóveis. Nós estamos totalmente
+          integrados à plataforma do e-cartórios de modo que, ao adquirir sua fração do imóvel, você automaticamente
+          assinará uma escritura eletrônica sendo dono legitimo de sua fração.
+        </div>
+      </div>
+      <div fxFlex="50px" class="hide-on-715"></div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px"
+         class="negative-margin animate__animated animate__fadeIn">
+      <div fxFlex="50px" class="hide-on-715"></div>
+      <h3 fxFlex="grow" class="section-title faded ">Imóveis recomendados</h3>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px" class="negative-margin">
+
+      <div fxFlex="50px" #swiperPrev class="swiper-button-prev-outside">
+        <fa-icon [icon]="icons.solid.chevronLeft"></fa-icon>
+      </div>
+
+      <swiper [config]="swiperConfig" fxFlex="auto" #swiper *ngIf="swiperLoaded"
+              [ngClass]="{'swiper-center-elements': checkCenter(swiper)}" class="assets-swiper">
+        <div *ngFor="let asset of activeOfferAssets">
+          <app-asset-card [asset]="asset" format="card" category="home"></app-asset-card>
+        </div>
+      </swiper>
+
+      <div fxFlex="50px" #swiperNext class="swiper-button-next-outside">
+        <fa-icon [icon]="icons.solid.chevronRight"></fa-icon>
+      </div>
+
+    </div>
+
+    <div class="p-grid">
+      <div class="p-col-12 text-center animate__animated animate__fadeIn">
+        <h1 class="black" style="margin-top: 60px">Proprietário, aumente a liquidez do seu imóvel</h1>
+        <h2 class="subtitle faded">Venda por partes, sem complicações ;)</h2>
+        <button mat-flat-button color="primary" class="round-btn">
+          <fa-icon [icon]="icons.solid.bullhorn"></fa-icon> Anuncie conosco</button>
+      </div>
+    </div>
+
+  </div>
+</div>

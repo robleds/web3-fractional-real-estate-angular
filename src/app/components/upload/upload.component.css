@@ -1,0 +1,30 @@
+.preview-file-row {
+  background-color: #efefef;
+  padding: 1px 0 1px 16px;
+  border-radius: 5px;
+  margin: 4px;
+}
+
+.margin-bottom {
+  margin-bottom: 10px;
+}
+
+.error-badge {
+  color: var(--warn);
+  font-size: 14px;
+  text-align: center;
+  background-color: #ffe4e4;
+  border: 1px solid #eabcbc;
+  padding: 8px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.inline {
+  display: inline;
+}
+
+::ng-deep .tooltip-bigger {
+  font-size: 15px;
+  white-space: pre-line;
+}

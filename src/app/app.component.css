@@ -1,0 +1,4 @@
+::ng-deep .tooltip-font {
+  font-size: 14px !important;
+  font-weight: 600;
+}

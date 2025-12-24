@@ -1,0 +1,33 @@
+<div style="margin-top: 70px" fxLayout="row" fxLayoutAlign="center" class="h-100vh">
+  <mat-card *ngIf="assetsService.purchaseData" style="max-width: 750px; margin-top: 50px; margin-right: 10px; margin-left: 10px">
+
+    <mat-card-header>
+      <div mat-card-avatar style="margin-right: 10px; margin-top: 4px; margin-left: 6px">
+        <fa-icon size="4x" style="color:#4f7bc6;" [icon]="faAward"></fa-icon>
+      </div>
+      <mat-card-title style="font-size: 30px">Parabéns!</mat-card-title>
+      <mat-card-subtitle style="font-size: 15px">Compra confirmada</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content style="font-size: 16px; padding-top: 20px;">
+      <p>Estamos quase lá
+        <fa-icon [icon]="faSmile"></fa-icon>
+      </p>
+      <p style="line-height: 25px;">Agora é só formalizar o processo no e-Cartório e você será proprietário de
+        <strong>{{assetsService.purchaseData['shares']}}</strong> {{assetsService.purchaseData['shares'] > 1
+          ? 'frações'
+          : 'fração'}} do
+        imóvel <strong>{{assetsService.purchaseData['asset']['title']}}.</strong>
+      </p>
+      <p>Você receberá um e-mail nosso com mais instruções.</p>
+    </mat-card-content>
+
+
+    <mat-card-actions style="padding-right: 12px; padding-bottom: 5px">
+      <div style="text-align: right">
+        Qualquer dúvida estamos aqui!<br><a href="mailto:contato@brbrix.com" style="text-decoration: none">contato@brbrix.com</a>
+      </div>
+    </mat-card-actions>
+
+  </mat-card>
+</div>

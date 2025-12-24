@@ -1,0 +1,90 @@
+<div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center" fxLayoutAlign.lt-sm="center start"
+     fxLayoutGap="10px" [ngClass]="{'margin-bottom': fileName !== ''}">
+  <div *ngIf="files.length < limit">
+    <button mat-flat-button type="button" color="primary" (click)="fileSelect.click()">
+      <fa-icon [icon]="faPaperclip"></fa-icon>
+      Selecionar {{limit > 1 ? (type === '2' ? 'documentos' : 'imagens') : (type === '2' ? 'documento' : 'imagem')}}
+    </button>
+    <input type="file" hidden #fileSelect (change)="selectDoc($event,fileSelect)" [multiple]="limit > 1"/>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px" style="width: 100%">
+    <div fxLayout="column" *ngFor="let file of files; let i = index">
+      <div class="preview-file-row">
+        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo" matTooltipClass="tooltip-bigger"
+                matTooltipPosition="below" *ngIf="file.hash" (click)="downloadDocument(i)">
+          <fa-icon [icon]="faEye"></fa-icon>
+        </button>
+
+        <ng-container *ngIf="type === '1'">
+          <img *ngIf="file.b64preview" [src]="file.b64preview" height="40" style="margin: 5px"
+               (click)="largeImageOverlay.show($event)" (mouseover)="largeImageOverlay.show($event)" (mouseleave)="largeImageOverlay.hide()">
+          <p-overlayPanel #largeImageOverlay>
+            <ng-template pTemplate>
+              <div>
+                <img [src]="file.b64preview" height="400">
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+        </ng-container>
+
+        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+        <button mat-icon-button type="button" color="primary" matTooltip="remover arquivo"
+                matTooltipClass="tooltip-bigger"
+                matTooltipPosition="right" (click)="removeDoc(i)" *ngIf="!file.hash">
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+        <button mat-icon-button type="button" color="warn" matTooltip="deletar arquivo" matTooltipClass="tooltip-bigger"
+                matTooltipPosition="right" (click)="deleteDocument(i)" *ngIf="file.hash">
+          <fa-icon [icon]="faTrash"></fa-icon>
+        </button>
+      </div>
+      <div style="margin: 0 5px" *ngIf="file.progress && file.progress !== 0 && file.progress !== 100">
+        <mat-progress-bar mode="determinate" [value]="file.progress"></mat-progress-bar>
+      </div>
+    </div>
+  </div>
+</div>
+<div fxLayout="row" fxLayoutAlign="start center" *ngIf="deleteErr !== ''">
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="deleteErr !== 'NOT_FOUND'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Ops, não conseguimos deletar o arquivo! Erro de conexão.
+  </div>
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="deleteErr === 'NOT_FOUND'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Arquivo não encontrado. Não conseguimos deletar o arquivo!
+  </div>
+</div>
+<div fxLayout="row" fxLayoutAlign="start center" *ngIf="fileError !== ''">
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+       *ngIf="fileError === 'LIMIT'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Você selecionou mais do que o máximo de arquivos! Máximo de {{limit}} arquivos.
+  </div>
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+       *ngIf="fileError === 'UNSUPPORTED_FORMAT'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Formato não suportado em {{fileName}}!
+    Apenas arquivos <span *ngIf="type === '1'">png, jpeg, heic ou webp.</span><span
+    *ngIf="type === '2'">png, jpeg ou pdf.</span>
+  </div>
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="fileError === 'SIZE_LIMIT'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Arquivo {{fileName}} maior do que o permitido! Tamanho máximo: {{convertBytes(sizeLimit)}}.
+  </div>
+</div>
+<div fxLayout="row" fxLayoutAlign="start center" *ngIf="pending && !uploadSuccess">
+  <button mat-flat-button type="button" color="primary" (click)="uploadDocuments()">
+    Confirmar envio
+    <fa-icon [icon]="faPaperPlane"></fa-icon>
+  </button>
+</div>
+<div fxLayout="row" fxLayoutAlign="start center" *ngIf="uploadError !== ''">
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="uploadError !== 'DUPLICATED'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Ops, algo deu errado com o envio.
+  </div>
+  <div class="error-badge animate__animated animate__fadeInDown animate__faster" *ngIf="uploadError === 'DUPLICATED'">
+    <fa-icon [icon]="faWarn"></fa-icon>
+    Arquivo duplicado! Um arquivo idêntico já foi enviado!
+  </div>
+</div>

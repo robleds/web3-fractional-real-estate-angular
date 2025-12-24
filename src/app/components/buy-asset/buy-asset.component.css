@@ -1,0 +1,58 @@
+.asset-card {
+  padding: 0;
+}
+
+.assetcard-container {
+  padding: 16px 16px 16px 0;
+}
+
+.balance-divider {
+  padding: 16px;
+  background: #fafafa;
+  margin: 20px 0 16px;
+  border-radius: 7px;
+}
+
+.cost-divider {
+  padding: 16px;
+}
+
+.margin-amount-section {
+  margin: 0 16px 24px !important;
+}
+/*TYPOGRAPHY*/
+.margint-30 {
+  margin: 15px 0 30px;
+}
+
+.margint-10 {
+  margin: 10px 0;
+}
+/*TYPOGRAPHY ENDS*/
+
+.percentage-btn {
+  min-width: 25%;
+  padding: 0 5px;
+  line-height: 26px;
+  margin-right: -1px;
+  border-radius: 4px;
+}
+
+.min-btn {
+  border-radius: 4px 0 0 4px;
+  font-size: 12px;
+}
+
+.max-btn {
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+}
+
+::ng-deep .shares-input > .p-inputnumber > .p-inputnumber-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+}
+
+::ng-deep .shares-input > .p-inputnumber {
+  max-width: 216px;
+}

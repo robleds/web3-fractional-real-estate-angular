@@ -1,0 +1,29 @@
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let file of files" style="margin: 10px">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{file.categoria}}
+      </mat-panel-title>
+      <mat-panel-description>
+        Data de envio: {{file.createdAt}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <p>Sequencia: {{file.seqNum}}</p>
+    <p>Registro: {{file.regId}}</p>
+
+    <button style="margin: 10px" mat-raised-button color="primary" (click)="loadDocument(file)">Visualizar</button>
+    <button style="margin: 10px" mat-raised-button color="warn" (click)="deleteDocument(file)">Excluir</button>
+
+    <p *ngIf="file.private">Documento privado</p>
+    <p *ngIf="!file.private">Documento público</p>
+
+    <p *ngIf="file.verified === 2">Documento verificado</p>
+
+    <p>{{file.hash.slice(0, 16)}}.{{file.extension}}</p>
+
+    <ng-container *ngIf="file.url">
+      <img [src]="file.url" style="max-height: 200px">
+    </ng-container>
+  </mat-expansion-panel>
+</mat-accordion>

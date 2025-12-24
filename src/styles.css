@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
+
+/* You can add global styles to this file, and also import other style files */
+:root {
+  /*--primary: #7e57c2;*/
+  /*--primary: #6d3da5;*/
+  --primary: #25a9db;
+  --primary-darker: #30184c;
+  --primary-lighter: #bfe2ef;
+  --accent: #FF9B42;
+  /*--accent: #35A696;*/
+  --white: #ffffff;
+  --success: #1ba91b;
+  --success-darker: #395939;
+  --success-bg: #bce6bc;
+  --warn: #f44336;
+  --warn-bg: #ffe4e4;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.h-100vh {
+  height: 100vh !important;
+}
+
+/*html { height: 100%; overflow: auto; }*/
+
+/*body { height: 100%; overflow: hidden}*/
+
+/*html, body {*/
+/*  height: 100%;*/
+/*}*/
+
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+}
+
+a {
+  cursor: pointer;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+:focus {
+  outline: none;
+}
+
+/*typography START*/
+.text-center {
+  text-align: center;
+}
+
+.weight-400 {
+  font-weight: 400;
+}
+
+.weight-600 {
+  font-weight: 600;
+}
+
+.green {
+  color: green;
+}
+
+.red {
+  color: var(--warn);
+}
+
+.faded {
+  color: #828a99;
+}
+
+.gray {
+  color: #5d5d5d;
+}
+
+.black {
+  color: #40444a
+}
+
+.white {
+  color: #ffffff;
+}
+
+.blue {
+  color: #25a9db;
+}
+/*typography END*/
+
+/*container responsive*/
+.container-mobile {
+  margin-left: auto;
+  margin-right: auto;
+  /*padding: 30px 16px;*/
+  max-width: 460px;
+}
+
+@media screen and (max-width: 576px) {
+  .container-dash {
+    padding: 30px 10px;
+  }
+  .container-lg {
+    padding: 30px 15px;
+  }
+}
+@media (min-width: 577px) and (max-width: 1049px) {
+  .container-dash {
+    padding: 30px 50px;
+  }
+  .container-lg {
+    padding: 30px 50px;
+  }
+}
+@media (min-width: 1050px) and (max-width: 1279px) {
+  .container-dash {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 16px;
+    max-width: 1024px;
+  }
+  .container-lg {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 16px;
+    max-width: 1180px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-dash {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 16px;
+    max-width: 1260px;
+  }
+  .container-lg {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 16px;
+    max-width: 1180px;
+  }
+}
+/*container responsive ends*/
+
+/*animation*/
+.animate {
+  -webkit-animation: cssAnimation 1s 1 ease;
+  -moz-animation: cssAnimation 1s 1 ease;
+  -o-animation: cssAnimation 1s 1 ease;
+  animation-delay: 0.1s;
+}
+
+@-webkit-keyframes cssAnimation {
+  from {
+    visibility: hidden;
+    opacity: 0;
+    transform: rotate(0deg) scale(1.1) skew(0deg) translate(0px);
+  }
+  to {
+    visibility: visible;
+    -webkit-transform: rotate(0deg) scale(1.0) skew(0deg) translate(0px);
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes cssAnimation {
+  from { -moz-transform: rotate(0deg) scale(0.955) skew(0deg) translate(0px); visibility: hidden; }
+  to { -moz-transform: rotate(0deg) scale(1.0) skew(0deg) translate(0px); visibility: visible; }
+}
+
+@-o-keyframes cssAnimation {
+  from { -o-transform: rotate(0deg) scale(0.955) skew(0deg) translate(0px); visibility: hidden; }
+  to { -o-transform: rotate(0deg) scale(1.0) skew(0deg) translate(0px); visibility: visible; }
+}
+/*animation end*/
+
+.mat-card.header {
+  border-radius: 4px 4px 0 0;
+}
+
+/*scroll bar*/
+::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #e0e0e0;
+}
+/*scroll bar end*/
+
+.dashboard-title {
+  font: 500 20px/32px Roboto,'Helvetica Neue',sans-serif;
+  align-self: center;
+}
+
+/*ROMOVE FOCUS OUTLINES ON PRIME BTNS START*/
+::ng-deep :focus {
+  box-shadow: none !important;
+}
+
+.p-button:focus {
+  box-shadow: none !important;
+}
+.p-dataview .p-dataview-layout-options .p-button:focus {
+  box-shadow: none;
+}
+
+.p-paginator-element:focus {
+  box-shadow: none  !important;
+}
+
+body .p-paginator .p-paginator-pages .p-paginator-page:focus {
+  box-shadow: none;
+}
+
+body .p-paginator .p-paginator-first:focus, body .p-paginator .p-paginator-prev:focus, body .p-paginator .p-paginator-next:focus, body .p-paginator .p-paginator-last:focus {
+  box-shadow: none;
+}
+
+body .p-table .p-sortable-column:focus {
+  box-shadow: none;
+}
+/*ROMOVE FOCUS OUTLINES ON PRIME BTNS END*/
+
+/*DIALOG WIDTH START*/
+@media screen and (max-width: 599px) {
+  .width-dialog {
+    max-width: 100vw !important;
+  }
+}
+@media screen and (min-width: 600px) {
+  .width-dialog {
+    width: 860px;
+  }
+}
+/*DIALOG WIDTH END*/
+
+.break-word {
+  white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* css-3 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  white-space: -webkit-pre-wrap; /* Newer versions of Chrome/Safari*/
+  word-break: break-word;
+  white-space: normal;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+/*SUCCESS, ERROR AND INFO MESSAGES*/
+.success-msg {
+  background-color: var(--success-bg);
+  border: 1px solid #a9dca9;
+  color: var(--success-darker);
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.info-msg {
+  background-color: var(--primary-lighter);
+  border: 1px solid var(--primary);
+  color: var(--primary-darker);
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.error-badge {
+  color: var(--warn);
+  font-size: 14px;
+  text-align: center;
+  background-color: var(--warn-bg);
+  border: 1px solid #eabcbc;
+  padding: 8px;
+  border-radius: 5px;
+}
+/*SUCCESS, ERROR AND INFO MESSAGES END*/
+
+.invisible-menu-item {
+  width: 156px;
+}
+
+.mat-expansion-panel-header {
+  min-height: 48px;
+  height: auto;
+  padding: 15px 24px !important;
+}

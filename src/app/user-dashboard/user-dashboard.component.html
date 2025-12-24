@@ -1,0 +1,82 @@
+<mat-sidenav-container class="sidenav-container h-100vh" autosize *ngIf="authService.isLogged">
+  <mat-sidenav class="sidenav" #drawer [@menuAnimation]="animationState" [opened]="(isHandset$ | async) ? false : true"
+               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'">
+    <mat-toolbar class="sidenav-menu" *ngIf="!(isHandset$ | async)">
+      <mat-icon class="hamburger" (click)="toggleDrawer()">menu</mat-icon>
+    </mat-toolbar>
+    <mat-nav-list>
+      <section class="sidenav-top">
+        <ng-container>
+          <a mat-list-item routerLinkActive="active" routerLink="/user/assets" (click)="closeOnMobile()">
+            <fa-icon style="margin-right: 15px; margin-left: -3px" [icon]="faHome" size="lg"></fa-icon>
+            Meus Imóveis
+          </a>
+          <a mat-list-item routerLinkActive="active" routerLink="/user/update-info/0" (click)="closeOnMobile()">
+            <fa-icon style="margin-right: 15px; margin-left: -2px" [icon]="faUserAlt" size="lg"></fa-icon>
+            Alterar cadastro
+          </a>
+          <a mat-list-item routerLinkActive="active" routerLink="/user/update-info/1" (click)="closeOnMobile()">
+            <fa-icon style="margin-right: 15px; margin-left: -2px" [icon]="faIdCard" size="lg"></fa-icon>
+            Enviar documentos
+          </a>
+          <a mat-list-item routerLinkActive="active" routerLink="/user/update-pass" (click)="closeOnMobile()">
+            <fa-icon style="margin-right: 15px; margin-left: -2px" [icon]="faLock" size="lg"></fa-icon>
+            Alterar senha
+          </a>
+          <a mat-list-item routerLinkActive="active" routerLink="/user/files" (click)="closeOnMobile()">
+            <fa-icon style="margin-right: 15px; margin-left: -2px" [icon]="faFiles" size="lg"></fa-icon>
+            Meus Arquivos
+          </a>
+        </ng-container>
+      </section>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content [@sidenavAnimation]="animationState" class="sidenav-content">
+    <div fxLayout="column" style="height: 100%;">
+      <mat-toolbar>
+        <mat-toolbar-row class="admin-toolbar" fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <button mat-icon-button type="button" aria-label="Toggle sidenav"  (click)="drawer.toggle()" *ngIf="isHandset$ | async">
+            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+          </button>
+          <div fxLayout="row" fxLayoutAlign="start center" style="cursor:pointer;" fxLayoutGap="6px">
+            <img src="assets/symbol2.png" style="width: 32px;" alt="Logo"/>
+            <h2 style="display: inline">Minha Conta</h2>
+          </div>
+          <span class="toolbar-spacer"></span>
+          <button *ngIf="!authService.isLogged; else elseBlock" mat-button>
+            <fa-icon [icon]="faSignInAlt" style="margin-right: 10px;"></fa-icon>
+            Entrar
+          </button>
+          <ng-template #elseBlock>
+            <button mat-button [matMenuTriggerFor]="menu" class="nav-btn">
+              <mat-icon>account_circle</mat-icon>
+              <span style="margin: 0 8px;">{{authService.userData.name}}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" class="menu-black">
+              <div class="invisible-menu-item"></div>
+              <button mat-menu-item routerLink="/home">
+                <fa-icon [icon]="faHome" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Home</span>
+              </button>
+              <button *ngIf="authService.userData.role === 'admin'" mat-button routerLink="/dash">
+                <fa-icon [icon]="faLock" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Administração</span>
+              </button>
+              <button mat-menu-item (click)="this.authService.logout()">
+                <fa-icon [icon]="faSignOutAlt" size="lg"></fa-icon>&nbsp;&nbsp;
+                <span>Logout</span>
+              </button>
+            </mat-menu>
+          </ng-template>
+        </mat-toolbar-row>
+      </mat-toolbar>
+
+      <div style="flex: 1; ">
+      <router-outlet></router-outlet>
+      </div>
+
+      <app-footer *ngIf="showFooter"></app-footer>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

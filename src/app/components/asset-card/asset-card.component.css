@@ -1,0 +1,256 @@
+/*SLICK IMAGE CAROUSEL START*/
+::ng-deep .images-carousel .slick-prev {
+  left: 0;
+  z-index: 1;
+}
+
+::ng-deep .images-carousel .slick-next {
+  right: 0;
+  z-index: 1;
+}
+
+/*FUNDO da seta de avançar - direita*/
+::ng-deep .images-carousel.hideArrow .slick-next:before {
+  content: "";
+  opacity: 0;
+}
+
+::ng-deep .images-carousel.showArrow .slick-next:before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  z-index: -1;
+  background: #fff;
+  border-radius: 9px 9px 0 0;
+  padding: 14px 26px;
+  transform: translateY(-50%) perspective(2px) rotate(270deg);
+  -webkit-transform: translateY(-50%) perspective(2px) rotate(270deg);
+  opacity: 0.65;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+}
+
+/*hover do FUNDO da seta de avançar*/
+::ng-deep .images-carousel .slick-next:hover:before, ::ng-deep .slick-next:focus:before {
+  opacity: 0.75;
+}
+
+/*setinha de avançar - para direita*/
+::ng-deep .images-carousel.hideArrow .slick-next::after {
+  content: "";
+  opacity: 0;
+}
+
+::ng-deep .images-carousel.showArrow .slick-next::after {
+  content: "";
+  position: relative;
+  border-left: 9px solid #4d4d4d;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: border-left-color, opacity;
+  transition-property: border-left-color, opacity;
+
+}
+
+/*hover da setinha de avançar*/
+::ng-deep .images-carousel .slick-next:hover:after {
+  border-left: 9px solid #1b9ad1;
+}
+
+
+/*FUNDO da seta de voltar - esquerda*/
+::ng-deep .images-carousel.hideArrow .slick-prev:before {
+  content: "";
+  opacity: 0;
+}
+
+::ng-deep .images-carousel.showArrow .slick-prev:before {
+  content: "";
+  position: absolute;
+  left: -13px;
+  z-index: -1;
+  background: #fff;
+  -webkit-transform: translateY(-50%) perspective(2px) rotate(90deg);
+  border: 1px solid #e1e3e7;
+  border-radius: 9px 9px 0 0;
+  transform: translateY(-50%) perspective(2px) rotate(90deg);
+  padding: 14px 26px;
+  opacity: 0.65;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+}
+
+/*hover do FUNDO da seta de voltar - esquerda*/
+::ng-deep .images-carousel .slick-prev:focus:before, ::ng-deep .slick-prev:hover:before {
+  opacity: 0.75;
+}
+
+/*setinha de voltar - para esquerda*/
+::ng-deep .images-carousel.hideArrow .slick-prev::after {
+  content: "";
+  opacity: 0;
+}
+
+::ng-deep .images-carousel.showArrow .slick-prev::after {
+  content: "";
+  position: relative;
+  border-right: 9px solid #4d4d4d;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: border-right-color, opacity;
+  transition-property: border-right-color, opacity;
+}
+
+/*hover da setinha de voltar*/
+::ng-deep .images-carousel .slick-prev:hover:after {
+  border-right: 9px solid #1b9ad1;
+}
+
+::ng-deep .images-carousel .slick-dots {
+  bottom: 0;
+}
+
+::ng-deep .images-carousel .slick-dots li.slick-active button:before {
+  color: white;
+  opacity: 0.9;
+}
+
+::ng-deep .images-carousel .slick-dots li button:before {
+  color: white;
+  opacity: 0.5;
+}
+
+::ng-deep .slick-dotted.slick-slider.images-carousel {
+  margin-bottom: 15px;
+}
+
+/*border radius on top*/
+::ng-deep .images-carousel.slick-slider .slick-list {
+  border-radius: 15px 15px 0 0;
+}
+/*SLICK IMAGE CAROUSEL END*/
+
+/*PORTRAIT AND LANSCAPE*/
+.portrait {
+  background-position: 50% 50% !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  min-height: 170px;
+  background-color: #d3d3d3;
+}
+
+.landscape {
+  background-size: cover !important;
+  min-height: 170px;
+}
+/*PORTRAIT AND LANSCAPE ENDS*/
+
+/*ASSET CARD START*/
+.asset-card {
+  padding: 0;
+  margin: 10px 8px;
+  border-radius: 15px;
+  min-width: 237px;
+  max-width: 270px;
+}
+
+.asset-card:hover {
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 5px 8px 0 rgba(0, 0, 0, 0.14), 0 1px 14px 0 rgba(0, 0, 0, 0.12);
+}
+
+.asset-card .mat-card-header {
+  padding: 0 16px;
+}
+
+.asset-card .mat-card-content {
+  padding: 0 16px;
+  margin-bottom: 0;
+}
+
+.asset-card .mat-card-actions {
+  padding: 0 8px;
+}
+
+/*ASSET CARD ENDS*/
+
+/*TYPOGRAPHY STARTS*/
+.price {
+  font-size: 16px;
+  letter-spacing: .05em;
+}
+
+.label {
+  font-size: 12px;
+  letter-spacing: .05em;
+  padding: 0 5px 0 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.float-label {
+  background-color: #f2f3f7;
+  padding: 4px 10px;
+  position: absolute;
+  top: 9px;
+  left: 3px;
+  border-radius: 25px;
+  color: rgba(0,0,0,.87);
+}
+
+.value {
+  color: #4d4d4d;
+}
+
+.margint-12 {
+  margin: 12px 0;
+}
+
+/*OFFER BUTTONS START*/
+.primary-lighter {
+  color: var(--primary-lighter);
+}
+
+.primary-darker {
+  color: var(--primary-darker);
+}
+/*OFFER BUTTONS END*/
+
+/*ADD MORE PICS BTN START*/
+.float-pictbtn {
+  padding: 4px 10px;
+  position: absolute;
+  top: 120px;
+  right: 0;
+  border-radius: 25px;
+}
+
+::ng-deep .pictbtn.mat-mini-fab .mat-button-wrapper {
+  padding: 0 0;
+}
+
+::ng-deep .pictbtn.mat-mini-fab {
+  width: 36px;
+  height: 36px;
+}
+
+::ng-deep .pictbtn.mat-mini-fab:hover {
+  opacity: 0.9;
+}
+
+::ng-deep .pictbtn mat-icon {
+  font-size: 22px;
+}
+
+::ng-deep .tooltip-center {
+  text-align: center;
+  width: min-content;
+}

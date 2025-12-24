@@ -1,0 +1,254 @@
+<div mat-dialog-title>
+  <span>
+    <span *ngIf="!data.editMode">Adicionar Novo</span><span *ngIf="data.editMode">Editar</span> Imóvel
+  </span>
+</div>
+<div mat-dialog-content>
+  <mat-horizontal-stepper #stepper linear="true" [selectedIndex]="data.step">
+    <mat-step [stepControl]="assetForm">
+      <form [formGroup]="assetForm" (ngSubmit)="onSubmit(stepper)">
+        <ng-template matStepLabel>Informações</ng-template>
+        <div fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="flex-start">
+          <div class="margint-20">Endereço</div>
+          <div formGroupName="address">
+            <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px">
+              <mat-form-field appearance="outline" fxFlex="0 0 auto">
+                <mat-label>País</mat-label>
+                <label>
+                  <input matInput placeholder="País" formControlName="country" required>
+                </label>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" fxFlex="0 0 auto">
+                <mat-label>CEP</mat-label>
+                <label>
+                  <input matInput placeholder="CEP" formControlName="zipCode" mask="00000-000" (blur)="loadAddress()"
+                         required>
+                </label>
+              </mat-form-field>
+            </div>
+
+            <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px"
+                 *ngIf="hasZipCode || data.editMode">
+              <mat-form-field class="animate__animated animate__fadeInLeft" appearance="outline" fxFlex="1 1 60%">
+                <mat-label>Rua</mat-label>
+                <label>
+                  <input matInput placeholder="Rua" formControlName="street" required>
+                </label>
+              </mat-form-field>
+
+              <mat-form-field class="animate__animated animate__fadeInLeft" appearance="outline" fxFlex="1 1 15%">
+                <mat-label>Número</mat-label>
+                <label>
+                  <input matInput type="number" placeholder="Número" formControlName="number" required>
+                </label>
+              </mat-form-field>
+
+              <mat-form-field class="animate__animated animate__fadeInLeft" appearance="outline" fxFlex="1 1 20%">
+                <mat-label>Complemento</mat-label>
+                <label>
+                  <input matInput placeholder="Complemento" formControlName="complement">
+                </label>
+              </mat-form-field>
+            </div>
+
+            <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px"
+                 *ngIf="hasZipCode || data.editMode">
+              <mat-form-field class="animate__animated animate__fadeInLeft" appearance="outline" fxFlex="1 1 40%">
+                <mat-label>Bairro</mat-label>
+                <label>
+                  <input matInput placeholder="Bairro" formControlName="neighborhood" required>
+                </label>
+              </mat-form-field>
+
+              <mat-form-field class="animate__animated animate__fadeInLeft" fxFlex="1 1 40%">
+                <mat-label>Cidade</mat-label>
+                <mat-select formControlName="city">
+                  <mat-option *ngFor="let city of addressService.cities" [value]="city['name']">
+                    {{city['name']}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="animate__animated animate__fadeInLeft" fxFlex="1 1 15%">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="state">
+                  <mat-option *ngFor="let state of addressService.states" [value]="state['code']">
+                    {{state['code']}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div>Sobre</div>
+          <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto">
+              <mat-label>Título</mat-label>
+              <label>
+                <input matInput placeholder="Título" formControlName="title" #title maxlength="100" required>
+              </label>
+              <mat-hint align="end">{{title.value.length}} / 100</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex="0 0 auto">
+              <mat-label>Tipo*</mat-label>
+              <mat-select formControlName="type">
+                <mat-option *ngFor="let type of assetTypes" [value]="type.name">
+                  {{type.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto">
+              <mat-label>Descrição</mat-label>
+              <label>
+                <textarea matInput rows="4" formControlName="description" required></textarea>
+              </label>
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px">
+            <mat-form-field appearance="outline" fxFlex="0 0 auto">
+              <mat-label>Total de Frações</mat-label>
+              <label>
+                <input matInput placeholder="ex: 100" formControlName="supply" type="number" required>
+              </label>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex="0 0 auto">
+              <mat-label>Área Total</mat-label>
+              <label>
+                <input matInput placeholder="Área Total" formControlName="totalArea" type="number" required>
+              </label>
+              <span matSuffix>m²</span>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex="0 0 auto">
+              <mat-label>Área Bruta Locável</mat-label>
+              <input matInput placeholder="Área Bruta Locável" formControlName="grossLettableArea"
+                     type="number" required>
+              <mat-error *ngIf="assetForm.get('grossLettableArea').errors?.invalid">Número maior que a área total!
+              </mat-error>
+              <span matSuffix>m²</span>
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="25px" fxLayoutGap.lt-sm="5px">
+            <div fxLayoutAlign="center center" fxFlex="0 0 auto">
+              <label style="margin-right: 10px">Imóvel está alugado? *</label>
+              <mat-radio-group formControlName="rented"
+                               [ngClass]="{'red-border': (assetForm.get('rented').invalid && clickedCheckForm)}">
+                <mat-radio-button value="yes" style="margin: 5px">Sim</mat-radio-button>
+                <mat-radio-button value="no" style="margin: 5px">Não</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <mat-form-field appearance="outline" fxFlex="0 0 auto">
+              <mat-label>Aluguel Líquido Estimado</mat-label>
+              <label>
+                <input matInput currencyMask placeholder="Aluguel Líquido Estimado" formControlName="netRent"
+                       [options]="customCurrencyMaskConfig" required>
+              </label>
+            </mat-form-field>
+          </div>
+
+          <div>Registro</div>
+          <div fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="15px" fxLayoutGap.lt-sm="5px">
+            <mat-form-field appearance="outline" fxFlex="0 0 40%">
+              <mat-label>Registro do Imóvel</mat-label>
+              <label>
+                <input matInput placeholder="Registro do Imóvel" formControlName="recordId" required>
+              </label>
+              <mat-hint>Número de registro no e-cartórios</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+        <div mat-dialog-actions fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="10px">
+          <ng-container *ngIf="registerErr !== ''">
+            <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                 *ngIf="registerErr === 'e'">
+              <fa-icon [icon]="icons.solid.warn"></fa-icon>
+              Ops, algo deu errado! Falha ao conectar.
+            </div>
+            <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                 *ngIf="registerErr !== 'e'">
+              <fa-icon [icon]="icons.solid.warn"></fa-icon>
+              {{registerErr}}
+            </div>
+          </ng-container>
+          <div fxLayout="row" fxLayoutAlign="end">
+            <button mat-button type="button" (click)="close(false)" color="warn">Cancelar</button>
+            <div class="overlay-container">
+              <button mat-flat-button class="next-btn" color="primary" type="submit" [disabled]="assetForm.invalid"
+                      *ngIf="!data.editMode">
+                Próximo
+                <fa-icon [icon]="icons.solid.chevronRight"></fa-icon>
+              </button>
+              <button mat-flat-button class="next-btn" color="primary" type="submit" [disabled]="assetForm.invalid"
+                      *ngIf="data.editMode">
+                Salvar
+                <fa-icon [icon]="icons.solid.check"></fa-icon>
+              </button>
+              <div *ngIf="assetForm.invalid" class="overlay-btn" (click)="checkForm()"
+                   matTooltip="Ops, ainda falta preencher alguns campos! Clique para indentificá-los"
+                   matTooltipClass="tooltip-bigger"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <!--2o Passo - documentos-->
+    <mat-step [stepControl]="docStep">
+      <!--    (ngSubmit)="submitDocsForm()"-->
+      <form [formGroup]="docsForm">
+        <ng-template matStepLabel>Fotos e Documentos</ng-template>
+
+        <div mat-dialog-content fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="flex-start">
+          <!--Documents Upload-->
+          <div class="margint-20">Upload de Documentos</div>
+          <app-upload type="2" [category]="'asset_' + assetForm.get('recordId').value"
+                      isPrivate="true" [sizeLimit]="10485760" isUnique="false" limit="10"
+                      [control]="docsForm.get('documents')">
+          </app-upload>
+          <div class="info">
+            <small>Arquivos devem ser menores que 5MB, formatos JPEG, PNG ou PDF</small>
+            <div><small>Máximo de 10 arquivos</small></div>
+          </div>
+          <!--Images Upload-->
+          <div class="img-section">Upload de Imagens</div>
+          <app-upload type="1" [category]="'asset_' + assetForm.get('recordId').value"
+                      isPrivate="false" [sizeLimit]="5242880" isUnique="false" limit="15"
+                      [control]="docsForm.get('images')">
+          </app-upload>
+          <div class="info">
+            <small>Imagens devem ser menores que 5MB, formatos JPEG, PNG, HEIC OU WEBP</small>
+            <div><small>Máximo de 15 imagens</small></div>
+          </div>
+
+
+        </div>
+        <div mat-dialog-actions fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="10px">
+          <ng-container *ngIf="uploadErr !== ''">
+            <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                 *ngIf="uploadErr === 'e'">
+              <fa-icon [icon]="icons.solid.warn"></fa-icon>
+              Ops, algo deu errado!
+            </div>
+          </ng-container>
+          <div fxLayout="row" fxLayoutAlign="end">
+            <button mat-button type="button" (click)="close(updated || !data.editMode)" color="primary">Terminar Depois</button>
+            <button mat-flat-button class="finish-btn" (click)="close(updated)" color="primary" type="submit"
+                    [disabled]="docsForm.invalid">
+              Terminar
+              <fa-icon [icon]="icons.solid.check"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

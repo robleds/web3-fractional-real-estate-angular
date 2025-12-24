@@ -1,0 +1,720 @@
+<div class="container-dash animate__animated animate__fadeIn animate__faster">
+  <mat-card class="header table-card mat-elevation-z0" style="margin-top: 60px">
+
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Análise de documentos pendentes</mat-panel-title>
+        <mat-panel-description>
+          {{pfUsers.length + pjUsers.length}} usuários pendentes
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <p-table #pfTable [value]="pfUsers" [rows]="10" dataKey="pfInfo.cpf" [responsive]="true" [scrollable]="true"
+               scrollHeight="500px" [globalFilterFields]="['name','pfInfo.cpf']"
+               class="users-table" rowExpandMode="single" (onRowExpand)="getDocState($event)">
+
+        <ng-template pTemplate="caption">
+          <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <mat-form-field class="searchbar">
+              <input type="text" matInput placeholder="Pesquisar..."
+                     (input)="pfTable.filterGlobal($event.target['value'], 'contains')">
+              <fa-icon matSuffix [icon]="faSearch" size="lg" class="search-icon"></fa-icon>
+            </mat-form-field>
+            <div>
+              Pessoas físicas
+            </div>
+            <div fxFlex="198px">
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th style="width: 100px !important;">
+            </th>
+            <th pSortableColumn="name" pResizableColumn>
+              Nome
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="pfInfo.cpf" pResizableColumn>
+              CNPJ
+              <p-sortIcon field="pfInfo.cpf"></p-sortIcon>
+            </th>
+            <th>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+          <tr [pSelectableRow]="rowData" [pRowToggler]="rowData" [ngClass]="expanded ? 'expanded-row' : ''">
+            <td style="width: 100px">
+              <a href="#" [pRowToggler]="rowData">
+                <fa-icon [icon]="faChevronRight" [ngClass]="expanded ? 'arrowDown' : 'arrowRight'"></fa-icon>
+              </a>
+            </td>
+            <td>
+              {{rowData['name']}}
+            </td>
+            <td>
+              {{rowData['pfInfo']['cpf']}}
+            </td>
+            <td>
+              <fa-icon *ngIf="rowData.approved" matTooltip="aprovado" [icon]="faCheck" size="lg"
+                       style="margin-right: 10px" class="success"></fa-icon>
+              <button type="button" mat-flat-button color="primary" (click)="openUserDialog(rowData)">
+                Ver usuário
+                <fa-icon [icon]="faSearch"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+          <tr class="detail-row">
+            <td colspan="4" class="animate__animated animate__fadeIn animate__faster" style="padding:20px;"
+                *ngIf="rowData.documents">
+              <div fxLayout="column" fxLayoutGap="20px">
+                <!--Documento com foto-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center"
+                     fxLayoutAlign.lt-sm="center start"
+                     fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex="30"><b>Documento com foto</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                       style="width: 100%">
+                    <div fxLayout="row wrap" fxLayoutAlign="start center"
+                         *ngFor="let file of rowData.documents.photoId; let i = index">
+
+                      <div class="preview-file-row">
+                        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                matTooltipClass="tooltip-bigger"
+                                matTooltipPosition="below" *ngIf="file.hash"
+                                (click)="downloadDocument(file, rowData._id)">
+                          <fa-icon [icon]="faEye"></fa-icon>
+                        </button>
+                        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                      </div>
+
+                      <div fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                [ngClass]="file.approved === 1 ? 'no-hover' : ''"
+
+                                [disabled]="file.approved === 1">
+                          <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                          </mat-icon>
+                          <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                          </mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" class="reprove-btn"
+                                (click)="setDocStatus(file, rowData, 2)"
+                                [ngClass]="file.approved === 2 ? 'no-hover' : ''"
+                                [disabled]="file.approved === 2">
+                          <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                          </mat-icon>
+                          <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                          </mat-icon>
+                        </button>
+                      </div>
+                      <mat-form-field appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster"
+                                      *ngIf="file.approved === 2">
+                        <mat-label>Motivo da reprovação</mat-label>
+                        <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason  || ''"
+                                  (blur)="writeReason($event, rowData, file)"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <!--Comprovante de residência-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center"
+                     fxLayoutAlign.lt-sm="center start"
+                     fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex="30"><b>Comprovante de residência</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                       style="width: 100%">
+                    <div fxLayout="row wrap" fxLayoutAlign="start center"
+                         *ngFor="let file of rowData.documents.proofOfResidence; let i = index">
+
+                      <div class="preview-file-row">
+                        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                matTooltipClass="tooltip-bigger"
+                                matTooltipPosition="below" *ngIf="file.hash"
+                                (click)="downloadDocument(file, rowData._id)">
+                          <fa-icon [icon]="faEye"></fa-icon>
+                        </button>
+                        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                      </div>
+
+                      <div fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                [ngClass]="file.approved === 1 ? 'no-hover' : ''" [disabled]="file.approved === 1">
+                          <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                          </mat-icon>
+                          <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                          </mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" class="reprove-btn"
+                                (click)="setDocStatus(file, rowData, 2)"
+                                [ngClass]="file.approved === 2 ? 'no-hover' : ''" [disabled]="file.approved === 2">
+                          <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                          </mat-icon>
+                          <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                          </mat-icon>
+                        </button>
+                      </div>
+
+                      <mat-form-field appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster"
+                                      *ngIf="file.approved === 2">
+                        <mat-label>Motivo da reprovação</mat-label>
+                        <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason  || ''"
+                                  (blur)="writeReason($event, rowData, file)"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <!--Comprovante de estado civil-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center"
+                     fxLayoutAlign.lt-sm="center start"
+                     fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex="30"><b>Comprovante de estado civil</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                       style="width: 100%">
+                    <div fxLayout="row wrap" fxLayoutAlign="start center"
+                         *ngFor="let file of rowData.documents.maritalStatus; let i = index">
+
+                      <div class="preview-file-row">
+                        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                matTooltipClass="tooltip-bigger"
+                                matTooltipPosition="below" *ngIf="file.hash"
+                                (click)="downloadDocument(file, rowData._id)">
+                          <fa-icon [icon]="faEye"></fa-icon>
+                        </button>
+                        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                      </div>
+
+                      <div fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                [ngClass]="file.approved === 1 ? 'no-hover' : ''" [disabled]="file.approved === 1">
+                          <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                          </mat-icon>
+                          <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                          </mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" class="reprove-btn"
+                                (click)="setDocStatus(file, rowData, 2)"
+                                [ngClass]="file.approved === 2 ? 'no-hover' : ''" [disabled]="file.approved === 2">
+                          <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                          </mat-icon>
+                          <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                          </mat-icon>
+                        </button>
+                      </div>
+
+                      <div>
+                        <button mat-button color="accent" matTooltipClass="tooltip-bigger" matTooltipPosition="below"
+                                [matTooltip]="'Solicitar mais um documento.' + '\n' + 'Para casos em que nota-se um documento faltante.'"
+                                (click)="maritalStatusReq._elementRef.nativeElement.style.display = 'block'">
+                          Solicitar documento
+                          <fa-icon [icon]="faQuestionCircle">
+                          </fa-icon>
+                        </button>
+                      </div>
+
+                      <mat-form-field appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster"
+                                      *ngIf="file.approved === 2">
+                        <mat-label>Motivo da reprovação</mat-label>
+                        <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason || ''"
+                                  (blur)="writeReason($event, rowData, file)"></textarea>
+                      </mat-form-field>
+                      <mat-form-field #maritalStatusReq style="display: none" appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster">
+                        <mat-label>Documento e motivo da solicitação</mat-label>
+                        <textarea matInput
+                                  placeholder="Por favor, defina o nome do documento faltante e o motivo da solicitação desse documento"
+                                  rows="2"
+                                  (blur)="writeMissingDoc($event, rowData, 'maritalStatus')"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start start"
+                     fxLayoutAlign.lt-sm="center start" fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex.gt-xs="30">
+                    <button mat-flat-button color="primary"
+                            class="animate__animated animate__fadeInDown animate__faster approveUser-btn"
+                            (click)="approveUser(rowData)" style="width: 100%"
+                            matTooltipClass="tooltip-bigger"
+                            [matTooltip]="'Para casos em que o operador vê a necessidade de aprovar o usuário manualmente. Por exemplo, se o usuário mandou a documentação por email.'">
+                      <fa-icon [icon]="faWarn" style="margin-left: 5px"></fa-icon>
+                      Aprovar manualmente
+                    </button>
+                  </div>
+                  <div fxFlex.gt-xs="70">
+                    <button mat-flat-button color="primary"
+                            class="animate__animated animate__fadeInDown animate__faster"
+                            (click)="sendEmail(rowData)" style="width: 100%"
+                            matTooltipClass="tooltip-bigger"
+                            [matTooltip]="'Se toda a documentação estiver aprovada, o usuário será aprovado automaticamente ao apertar confirmar.'">
+                      Confirmar e enviar email
+                      <fa-icon [icon]="faPaperPlane" style="margin-left: 5px"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+                <ng-container *ngIf="approveUserErr !== ''">
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="approveUserErr === 'e'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Ops, algo deu errado! Falha ao conectar.
+                  </div>
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="approveUserErr === 'NOT_FOUND'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Usuário não encontrado! Por favor, atualize a página.
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="sendEmailErr !== ''">
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="sendEmailErr === 'e'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Ops, algo deu errado! Falha ao conectar.
+                  </div>
+                </ng-container>
+                <div class="success-msg animate__animated animate__fadeInDown animate__faster" *ngIf="sendEmailSuccess">
+                  <fa-icon [icon]="faCheck"></fa-icon>
+                  <b> Email enviado!</b> O usuário receberá o email com todas as informações de aprovação/reprovação ;)
+                </div>
+                <div class="success-msg animate__animated animate__fadeInDown animate__faster"
+                     *ngIf="rowData.approved">
+                  <fa-icon [icon]="faCheck"></fa-icon>
+                  <b> Usuário aprovado com sucesso!</b>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+      <!--      <p-table #pfTable [value]="pfUsers" [rows]="10" dataKey="pfInfo.cpf" [responsive]="true" [scrollable]="true"-->
+      <!--               scrollHeight="500px" [globalFilterFields]="['name','pfInfo.cpf']" rowExpandMode="single"-->
+      <!--               class="users-table">-->
+
+      <!--        <ng-template pTemplate="caption">-->
+      <!--          <div fxLayout="row wrap" fxLayoutAlign="space-between center">-->
+      <!--            <mat-form-field class="searchbar">-->
+      <!--              <input type="text" matInput placeholder="Pesquisar..."-->
+      <!--                     (input)="pfTable.filterGlobal($event.target['value'], 'contains')">-->
+      <!--              <fa-icon matSuffix [icon]="faSearch" size="lg" class="search-icon"></fa-icon>-->
+      <!--            </mat-form-field>-->
+      <!--            <div>-->
+      <!--              Pessoas físicas-->
+      <!--            </div>-->
+      <!--            <div fxFlex="198px">-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </ng-template>-->
+      <!--        <ng-template pTemplate="header" let-columns>-->
+      <!--          <tr>-->
+      <!--            <th style="width: 100px !important;">-->
+      <!--            </th>-->
+      <!--            <th pSortableColumn="name" pResizableColumn>-->
+      <!--              Nome-->
+      <!--              <p-sortIcon field="name"></p-sortIcon>-->
+      <!--            </th>-->
+      <!--            <th pSortableColumn="pfInfo.cpf" pResizableColumn>-->
+      <!--              CPF-->
+      <!--              <p-sortIcon field="pfInfo.cpf"></p-sortIcon>-->
+      <!--            </th>-->
+      <!--            <th>-->
+      <!--            </th>-->
+      <!--          </tr>-->
+      <!--        </ng-template>-->
+
+      <!--        <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">-->
+      <!--          <tr [pSelectableRow]="rowData" [pRowToggler]="rowData" [ngClass]="expanded ? 'expanded-row' : ''">-->
+      <!--            <td style="width: 100px">-->
+      <!--              <a href="#" [pRowToggler]="rowData">-->
+      <!--                <fa-icon [icon]="faChevronRight" [ngClass]="expanded ? 'arrowDown' : 'arrowRight'"></fa-icon>-->
+      <!--              </a>-->
+      <!--            </td>-->
+      <!--            <td>-->
+      <!--              {{rowData['name']}}-->
+      <!--            </td>-->
+      <!--            <td>-->
+      <!--              {{rowData['pfInfo']['cpf']}}-->
+      <!--            </td>-->
+      <!--            <td>-->
+      <!--              <button type="button" mat-flat-button color="primary" (click)="openUserDialog(rowData)">-->
+      <!--                Ver usuário-->
+      <!--                <fa-icon [icon]="faSearch"></fa-icon>-->
+      <!--              </button>-->
+      <!--            </td>-->
+      <!--          </tr>-->
+      <!--        </ng-template>-->
+
+      <!--        <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">-->
+      <!--          <tr class="detail-row">-->
+      <!--            <td colspan="4" class="animate__animated animate__fadeIn animate__faster">-->
+      <!--              <div class="p-grid -fluid" style="padding:20px; width: 100%">-->
+      <!--                <div class="p-col-5" style="text-align: left">-->
+      <!--                  <b>Documento com foto:</b>-->
+      <!--                </div>-->
+      <!--                <div class="p-col-7">-->
+      <!--                </div>-->
+      <!--                <div class="p-col-5" style="text-align: left">-->
+      <!--                  <b>Comprovante de residência:</b>-->
+      <!--                </div>-->
+      <!--                <div class="p-col-7">-->
+      <!--                </div>-->
+      <!--                <div class="p-col-5" style="text-align: left">-->
+      <!--                  <b>Comprovante de estado civil:</b>-->
+      <!--                </div>-->
+      <!--                <div class="p-col-7">-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </td>-->
+      <!--          </tr>-->
+      <!--        </ng-template>-->
+
+      <!--      </p-table>-->
+
+      <p-table #pjTable [value]="pjUsers" [rows]="10" dataKey="pjInfo.cnpj" [responsive]="true" [scrollable]="true"
+               scrollHeight="500px" [globalFilterFields]="['pjInfo.legalEntityName','pjInfo.cnpj']"
+               class="users-table" rowExpandMode="single" (onRowExpand)="getDocState($event)">
+
+        <ng-template pTemplate="caption">
+          <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <mat-form-field class="searchbar">
+              <input type="text" matInput placeholder="Pesquisar..."
+                     (input)="pjTable.filterGlobal($event.target['value'], 'contains')">
+              <fa-icon matSuffix [icon]="faSearch" size="lg" class="search-icon"></fa-icon>
+            </mat-form-field>
+            <div>
+              Pessoas jurídicas
+            </div>
+            <div fxFlex="198px">
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th style="width: 100px !important;">
+            </th>
+            <th pSortableColumn="pjInfo.legalEntityName" pResizableColumn>
+              Nome
+              <p-sortIcon field="pjInfo.legalEntityName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="pjInfo.cnpj" pResizableColumn>
+              CNPJ
+              <p-sortIcon field="pjInfo.cnpj"></p-sortIcon>
+            </th>
+            <th>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+          <tr [pSelectableRow]="rowData" [pRowToggler]="rowData" [ngClass]="expanded ? 'expanded-row' : ''">
+            <td style="width: 100px">
+              <a href="#" [pRowToggler]="rowData">
+                <fa-icon [icon]="faChevronRight" [ngClass]="expanded ? 'arrowDown' : 'arrowRight'"></fa-icon>
+              </a>
+            </td>
+            <td>
+              {{rowData['pjInfo']['legalEntityName']}}
+            </td>
+            <td>
+              {{rowData['pjInfo']['cnpj']}}
+            </td>
+            <td>
+              <fa-icon *ngIf="rowData.approved" matTooltip="aprovado" [icon]="faCheck" size="lg"
+                       style="margin-right: 10px" class="success"></fa-icon>
+              <button type="button" mat-flat-button color="primary" (click)="openUserDialog(rowData)">
+                Ver usuário
+                <fa-icon [icon]="faSearch"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+          <tr class="detail-row">
+            <td colspan="4" class="animate__animated animate__fadeIn animate__faster" style="padding:20px;"
+                *ngIf="rowData.documents">
+              <div fxLayout="column" fxLayoutGap="20px">
+                <!--Cartão CNPJ-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center"
+                     fxLayoutAlign.lt-sm="center start"
+                     fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex="30"><b>Cartão CNPJ</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                       style="width: 100%">
+                    <div fxLayout="row wrap" fxLayoutAlign="start center"
+                         *ngFor="let file of rowData.documents.cnpjCard; let i = index">
+
+                      <div class="preview-file-row">
+                        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                matTooltipClass="tooltip-bigger"
+                                matTooltipPosition="below" *ngIf="file.hash"
+                                (click)="downloadDocument(file, rowData._id)">
+                          <fa-icon [icon]="faEye"></fa-icon>
+                        </button>
+                        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                      </div>
+
+                      <div fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                [ngClass]="file.approved === 1 ? 'no-hover' : ''"
+
+                                [disabled]="file.approved === 1">
+                          <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                          </mat-icon>
+                          <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                          </mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" class="reprove-btn"
+                                (click)="setDocStatus(file, rowData, 2)"
+                                [ngClass]="file.approved === 2 ? 'no-hover' : ''"
+                                [disabled]="file.approved === 2">
+                          <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                          </mat-icon>
+                          <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                          </mat-icon>
+                        </button>
+                      </div>
+                      <mat-form-field appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster"
+                                      *ngIf="file.approved === 2">
+                        <mat-label>Motivo da reprovação</mat-label>
+                        <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason  || ''"
+                                  (blur)="writeReason($event, rowData, file)"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <!--Contrato Social-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start center"
+                     fxLayoutAlign.lt-sm="center start"
+                     fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex="30"><b>Contrato Social</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                       style="width: 100%">
+                    <div fxLayout="row wrap" fxLayoutAlign="start center"
+                         *ngFor="let file of rowData.documents.socialContract; let i = index">
+
+                      <div class="preview-file-row">
+                        <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                matTooltipClass="tooltip-bigger"
+                                matTooltipPosition="below" *ngIf="file.hash"
+                                (click)="downloadDocument(file, rowData._id)">
+                          <fa-icon [icon]="faEye"></fa-icon>
+                        </button>
+                        <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                      </div>
+
+                      <div fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                [ngClass]="file.approved === 1 ? 'no-hover' : ''" [disabled]="file.approved === 1">
+                          <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                          </mat-icon>
+                          <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                          </mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" class="reprove-btn"
+                                (click)="setDocStatus(file, rowData, 2)"
+                                [ngClass]="file.approved === 2 ? 'no-hover' : ''" [disabled]="file.approved === 2">
+                          <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                          </mat-icon>
+                          <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                    matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                          </mat-icon>
+                        </button>
+                      </div>
+
+                      <div>
+                        <button mat-button color="accent" matTooltipClass="tooltip-bigger" matTooltipPosition="below"
+                                [matTooltip]="'Solicitar mais um documento.' + '\n' + 'Para casos em que nota-se um documento faltante.'"
+                                (click)="socialContractReq._elementRef.nativeElement.style.display = 'block'">
+                          Solicitar documento
+                          <fa-icon [icon]="faQuestionCircle">
+                          </fa-icon>
+                        </button>
+                      </div>
+
+                      <mat-form-field appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster"
+                                      *ngIf="file.approved === 2">
+                        <mat-label>Motivo da reprovação</mat-label>
+                        <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason  || ''"
+                                  (blur)="writeReason($event, rowData, file)"></textarea>
+                      </mat-form-field>
+                      <mat-form-field #socialContractReq style="display: none" appearance="outline" fxFlex="100"
+                                      class="animate__animated animate__fadeInLeft animate__faster">
+                        <mat-label>Documento e motivo da solicitação</mat-label>
+                        <textarea matInput
+                                  placeholder="Por favor, defina o nome do documento faltante e o motivo da solicitação desse documento"
+                                  rows="2"
+                                  (blur)="writeMissingDoc($event, rowData, 'socialContract')"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <!--Identificação dos sócios administradores-->
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start start"
+                     fxLayoutAlign.lt-sm="center start" fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex.gt-xs="30"><b>Identificação dos sócios administradores</b></div>
+                  <div fxFlex.gt-xs="70" fxLayout="column" fxLayoutGap="20px">
+                    <div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="center start"
+                         *ngFor="let manager of rowData.managerDocs; let i = index">
+                      <div class="break-word inline" fxFlex="100">{{manager.name}}</div>
+                      <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="space-between center"
+                           class="width-100">
+                        <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px"
+                             *ngFor="let file of manager.docs">
+
+                          <div class="preview-file-row">
+                            <button mat-icon-button type="button" color="primary" matTooltip="ver arquivo"
+                                    matTooltipClass="tooltip-bigger"
+                                    matTooltipPosition="below" *ngIf="file.hash"
+                                    (click)="downloadDocument(file, rowData._id)">
+                              <fa-icon [icon]="faEye"></fa-icon>
+                            </button>
+                            <div class="break-word inline" fxFlex="100" fxFlexAlign="center">{{file.name}}</div>
+                          </div>
+
+                          <div fxLayout="row" fxLayoutAlign="start center">
+                            <button mat-icon-button class="success-btn" (click)="setDocStatus(file, rowData, 1)"
+                                    [ngClass]="file.approved === 1 ? 'no-hover' : ''" [disabled]="file.approved === 1">
+                              <mat-icon *ngIf="file.approved !== 1" [matTooltip]="'Aprovar'"
+                                        matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle_outline
+                              </mat-icon>
+                              <mat-icon class="success" *ngIf="file.approved === 1" [matTooltip]="'Aprovado'"
+                                        matTooltipClass="tooltip-bigger" matTooltipPosition="below">check_circle
+                              </mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" class="reprove-btn"
+                                    (click)="setDocStatus(file, rowData, 2)"
+                                    [ngClass]="file.approved === 2 ? 'no-hover' : ''" [disabled]="file.approved === 2">
+                              <mat-icon *ngIf="file.approved !== 2" [matTooltip]="'Reprovar'"
+                                        matTooltipClass="tooltip-bigger" matTooltipPosition="below">highlight_off
+                              </mat-icon>
+                              <mat-icon class="error" *ngIf="file.approved === 2" [matTooltip]="'Reprovado'"
+                                        matTooltipClass="tooltip-bigger" matTooltipPosition="below">cancel
+                              </mat-icon>
+                            </button>
+                          </div>
+
+                          <div>
+                            <button mat-button color="accent" matTooltipClass="tooltip-bigger"
+                                    matTooltipPosition="below"
+                                    [matTooltip]="'Solicitar mais um documento.' + '\n' + 'Para casos em que nota-se um documento faltante.'"
+                                    (click)="managerReq._elementRef.nativeElement.style.display = 'block'">
+                              Solicitar documento
+                              <fa-icon [icon]="faQuestionCircle">
+                              </fa-icon>
+                            </button>
+                          </div>
+                          <mat-form-field appearance="outline" fxFlex="100"
+                                          class="animate__animated animate__fadeInLeft animate__faster"
+                                          *ngIf="file.approved === 2">
+                            <mat-label>Motivo da reprovação</mat-label>
+                            <textarea matInput placeholder="" rows="2" [value]="file.rejectedReason  || ''"
+                                      (blur)="writeReason($event, rowData, file)"></textarea>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline" fxFlex="100" #managerReq style="display: none"
+                                          class="animate__animated animate__fadeInLeft animate__faster">
+                            <mat-label>Documento e motivo da solicitação</mat-label>
+                            <textarea matInput
+                                      placeholder="Por favor, defina o nome do documento faltante e o motivo da solicitação desse documento"
+                                      rows="2"
+                                      (blur)="writeMissingDoc($event, rowData, 'manager_' + manager.cpf)"></textarea>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-xs="start start"
+                     fxLayoutAlign.lt-sm="center start" fxLayoutGap="10px" style="width: 100%">
+                  <div fxFlex.gt-xs="30">
+                    <button mat-flat-button color="primary"
+                            class="animate__animated animate__fadeInDown animate__faster approveUser-btn"
+                            (click)="approveUser(rowData)" style="width: 100%"
+                            matTooltipClass="tooltip-bigger"
+                            [matTooltip]="'Para casos em que o operador vê a necessidade de aprovar o usuário manualmente. Por exemplo, se o usuário mandou a documentação por email.'">
+                      <fa-icon [icon]="faWarn" style="margin-left: 5px"></fa-icon>
+                      Aprovar manualmente
+                    </button>
+                  </div>
+                  <div fxFlex.gt-xs="70">
+                    <button mat-flat-button color="primary"
+                            class="animate__animated animate__fadeInDown animate__faster"
+                            (click)="sendEmail(rowData)" style="width: 100%"
+                            matTooltipClass="tooltip-bigger"
+                            [matTooltip]="'Se toda a documentação estiver aprovada, o usuário será aprovado automaticamente ao apertar confirmar.'">
+                      Confirmar e enviar email
+                      <fa-icon [icon]="faPaperPlane" style="margin-left: 5px"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+                <ng-container *ngIf="approveUserErr !== ''">
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="approveUserErr === 'e'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Ops, algo deu errado! Falha ao conectar.
+                  </div>
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="approveUserErr === 'NOT_FOUND'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Usuário não encontrado! Por favor, atualize a página.
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="sendEmailErr !== ''">
+                  <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+                       *ngIf="sendEmailErr === 'e'">
+                    <fa-icon [icon]="faWarn"></fa-icon>
+                    Ops, algo deu errado! Falha ao conectar.
+                  </div>
+                </ng-container>
+                <div class="success-msg animate__animated animate__fadeInDown animate__faster" *ngIf="sendEmailSuccess">
+                  <fa-icon [icon]="faCheck"></fa-icon>
+                  <b> Email enviado!</b> O usuário receberá o email com todas as informações de aprovação/reprovação ;)
+                </div>
+                <div class="success-msg animate__animated animate__fadeInDown animate__faster"
+                     *ngIf="rowData.approved">
+                  <fa-icon [icon]="faCheck"></fa-icon>
+                  <b> Usuário aprovado com sucesso!</b>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+
+    </mat-expansion-panel>
+
+
+  </mat-card>
+</div>

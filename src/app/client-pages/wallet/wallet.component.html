@@ -1,0 +1,112 @@
+<div class="container-dash animate__animated animate__fadeIn animate__faster wallet-page">
+  <div class="p-grid p-align-stretch" fxLayoutAlign.md="end strech">
+    <div class="p-col-12">
+      <mat-card style="margin-top: 50px">
+        <span class="subtitle">Saldo</span>
+        <mat-card-content>
+          <h1 class="accent title">R$ {{brltBalance | number:'1.2-2':'pt-BR'}}</h1>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <mat-card class="header table-card mat-elevation-z4" style="margin-top: 30px">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="table-card-header">
+      <span class="subtitle">Imóveis</span>
+    </div>
+    <mat-card-content>
+      <p-table [value]="assetsBalance" [rows]="10" dataKey="name" [responsive]="true" [scrollable]="true" scrollHeight="342px">
+        <ng-template pTemplate="caption">
+          <div style="text-align: left">
+            <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">
+              <input type="text" matInput placeholder="Pesquisar...">
+              <fa-icon matSuffix [icon]="['fas', 'search']" size="lg"></fa-icon>
+            </mat-form-field>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th pSortableColumn="record_id" pResizableColumn>
+              Número de Registro
+              <p-sortIcon field="record_id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="shares" pResizableColumn>
+              Cotas
+              <p-sortIcon field="shares"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData" (click)="onSelect(rowData['record_id'])">
+            <td>
+              {{rowData['record_id']}}
+            </td>
+            <td>
+              {{rowData['balance']}}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="header table-card mat-elevation-z4" style="margin-top: 40px">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="table-card-header">
+      <span class="subtitle">Transações</span>
+    </div>
+    <mat-card-content>
+      <p-table [value]="transactions" [rows]="10" dataKey="name" [responsive]="true" [scrollable]="true" scrollHeight="342px">
+
+        <ng-template pTemplate="caption">
+          <div style="text-align: left">
+            <mat-form-field class="searchbar" ngStyle.gt-md="width: 250px">
+              <input type="text" matInput placeholder="Pesquisar...">
+              <fa-icon matSuffix [icon]="['fas', 'search']" size="lg"></fa-icon>
+            </mat-form-field>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th pSortableColumn="id" style="width: 160px" pResizableColumn>
+              #
+              <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="record_id" pResizableColumn>
+              Número de Registro
+              <p-sortIcon field="record_id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="shares" pResizableColumn>
+              Cotas
+              <p-sortIcon field="shares"></p-sortIcon>
+            </th>
+            <th pSortableColumn="value" pResizableColumn>
+              Valor
+              <p-sortIcon field="value"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData">
+            <td style="width: 160px">
+              {{rowData['id']}}
+            </td>
+            <td>
+              {{rowData['record_id']}}
+            </td>
+            <td>
+              {{rowData['shares']}}
+            </td>
+            <td>
+              {{rowData['value']}}
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

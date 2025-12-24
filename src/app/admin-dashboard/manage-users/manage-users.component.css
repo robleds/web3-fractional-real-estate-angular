@@ -1,0 +1,166 @@
+.search-icon {
+  color: #848484;
+}
+
+::ng-deep .arrowRight .svg-inline--fa {
+  transform: rotate(0deg);
+}
+
+/*animation*/
+::ng-deep  .arrowDown .svg-inline--fa {
+  transform: rotate(90deg);
+  -webkit-animation: arrowDownAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+  -moz-animation: arrowDownAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+  -o-animation: arrowDownAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+}
+
+@-webkit-keyframes arrowDownAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(90deg);
+  }
+}
+
+@-moz-keyframes arrowDownAnimation {
+  from { -moz-transform: rotate(0deg) }
+  to { -moz-transform: rotate(90deg) }
+}
+
+@-o-keyframes arrowDownAnimation {
+  from { -o-transform: rotate(0deg)}
+  to { -o-transform: rotate(90deg) }
+}
+
+::ng-deep  .arrowRight .svg-inline--fa {
+  -webkit-animation: arrowRightAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+  -moz-animation: arrowRightAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+  -o-animation: arrowRightAnimation 225ms cubic-bezier(0.4,0.0,0.2,1);
+}
+
+@-webkit-keyframes arrowRightAnimation {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    -webkit-transform: rotate(0deg);
+  }
+}
+
+@-moz-keyframes arrowRightAnimation {
+  from { -moz-transform: rotate(90deg) }
+  to { -moz-transform: rotate(0deg) }
+}
+
+@-o-keyframes arrowRightAnimation {
+  from { -o-transform: rotate(90deg)}
+  to { -o-transform: rotate(0deg) }
+}
+/*animation end*/
+
+/*expanded table START*/
+::ng-deep .users-table .p-datatable-header {
+  background: #fafafa;
+}
+
+::ng-deep .users-table .p-datatable-thead > tr > th {
+  background: #fafafa;
+}
+
+
+.users-table .p-selectable-row:hover {
+  background-color: lightgrey;
+  cursor: pointer;
+}
+
+::ng-deep  body .p-table .p-table-tbody > tr {
+  box-shadow: none !important;
+  transition: none !important;
+  outline: none !important;
+}
+
+::ng-deep  body .p-table .p-table-tbody > tr > td {
+  box-shadow: none !important;
+  transition: none !important;
+  outline: none !important;
+}
+
+::ng-deep body .p-table .p-table-tbody > tr > td > *{
+  box-shadow: none !important;
+  outline: none !important;
+}
+/*expanded table END*/
+
+.preview-file-row {
+  background-color: #e5e5e5;
+  padding: 1px 16px 1px 4px;
+  border-radius: 5px;
+  margin: 4px;
+}
+
+::ng-deep .approve-btn .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  line-height: 41px;
+}
+
+::ng-deep .approve-btn.mat-button-toggle-group {
+  margin: 4px;
+}
+
+::ng-deep .approve {
+  border-color: #395939;
+  color: #395939;
+  background-color: var(--success-bg);
+  font-weight: 600;
+}
+
+::ng-deep .disapprove {
+  border-color: var(--warn);
+  color: var(--warn);
+  background-color: var(--warn-bg);
+  font-weight: 600;
+}
+
+.success-btn {
+  color: var(--success);
+}
+
+.success-btn:hover {
+  opacity: 0.7;
+}
+
+.no-hover:hover {
+  opacity: 1 !important;
+}
+
+.approveUser-btn {
+  /*color: var(--success-darker);*/
+  background-color: var(--success);
+}
+
+.success {
+  color: var(--success);
+}
+
+.reprove-btn:hover {
+  opacity: 0.7;
+}
+
+.error {
+  color: var(--warn);
+}
+
+::ng-deep .tooltip-bigger {
+  font-size: 15px;
+  white-space: pre-line;
+}
+
+/*table expand row START*/
+.expanded-row {
+  background-color: whitesmoke !important;
+}
+
+.detail-row {
+  background-color: whitesmoke !important;
+}
+

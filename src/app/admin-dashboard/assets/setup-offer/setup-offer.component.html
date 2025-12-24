@@ -1,0 +1,161 @@
+<h1 mat-dialog-title>Criar Oferta para o imóvel {{asset.recordId}}</h1>
+
+<form [formGroup]="setupOfferForm" (ngSubmit)="setupOffer()" fxLayout="column">
+  <div mat-dialog-content>
+    <div fxLayout.gt-xs="row wrap" fxLayoutGap.gt-xs="8px" fxLayout.lt-sm="column" fxLayoutGap.lt-sm="35px">
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Frações para Venda</mat-label>
+        <input matInput type="number" placeholder="Número de Frações" formControlName="numShares" required>
+        <mat-hint>Máximo disponível: {{parse(asset.supply) | number:'1.2-2':'pt-BR'}}</mat-hint>
+        <mat-error *ngIf="setupOfferForm.get('numShares').errors?.invalid">Valor maior que o máximo {{asset.supply}}
+          disponível!
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Preço da Fração</mat-label>
+        <label>
+          <input matInput currencyMask formControlName="price" [options]="customCurrencyMaskConfig">
+        </label>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayoutAlign="center stretch" class="balance-divider animate__animated animate__fadeIn"
+         fxLayoutGap="10px" style="margin-top: 23px"
+         *ngIf="setupOfferForm.get('price').value !== '' && setupOfferForm.get('price').valid">
+      <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutGap.gt-xs="10px" fxFlex="grow">
+      <span fxFlex.gt-xs="46">Preço total do imóvel:
+        <fa-icon [icon]="faQuestion"
+                 matTooltip="total frações * preço da fração"
+                 matTooltipClass="tooltip-bigger"
+                 matTooltipPosition="above" class="info-tooltip"></fa-icon>
+      </span>
+        <span
+          fxFlex="grow">R$ {{parse(setupOfferForm.get('price').value) * parse(asset.supply) | number:'1.2-2':'pt-BR'}}</span>
+      </div>
+      <div fxLayout.gt-xs="row" fxLayout.lt-sm="column" fxLayoutGap.gt-xs="10px" fxFlex="grow"
+           *ngIf="setupOfferForm.get('numShares').value !== '' && setupOfferForm.get('numShares').valid">
+      <span fxFlex.gt-xs="46">Valor total da oferta:
+        <fa-icon [icon]="faQuestion"
+                 matTooltip="frações para venda * preço"
+                 matTooltipClass="tooltip-bigger"
+                 matTooltipPosition="above" class="info-tooltip"></fa-icon>
+      </span>
+        <span fxFlex="grow">
+        R$ {{(setupOfferForm.get('numShares').value * setupOfferForm.get('price').value) | number:'1.2-2':'pt-BR'}}
+      </span>
+      </div>
+    </div>
+
+    <div fxLayout.gt-xs="row wrap" fxLayoutGap.gt-xs="8px" fxLayout.lt-sm="column" fxLayoutGap.lt-sm="35px"
+         style="margin-top: 15px">
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Fração Mínima</mat-label>
+        <label>
+          <input matInput type="number" placeholder="Quantidade Mínima" formControlName="lot" required>
+        </label>
+        <mat-hint>Quantidade mínima que pode ser comprada por um usuário</mat-hint>
+        <mat-error *ngIf="setupOfferForm.get('lot').errors?.invalid">Valor maior que o total ofertado!</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Fração Máxima</mat-label>
+        <label>
+          <input matInput type="number" placeholder="Quantidade Máxima" formControlName="maxHolderShares" required>
+        </label>
+        <mat-hint>Quantidade máxima que pode ser comprada por um usuário</mat-hint>
+        <mat-error *ngIf="setupOfferForm.get('maxHolderShares').errors?.invalid">Valor maior que o total ofertado!
+        </mat-error>
+        <mat-error *ngIf="setupOfferForm.get('maxHolderShares').errors?.smaller">Máximo não pode ser menor que o mínimo!
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start stretch" class="animate__animated animate__fadeIn" fxLayoutGap="8px"
+         style="margin-top: 23px"
+         *ngIf="setupOfferForm.get('lot').value !== '' || setupOfferForm.get('maxHolderShares').value !== ''">
+      <div fxLayout="column" fxFlex="50" *ngIf="setupOfferForm.get('lot').value !== ''" class="balance-divider">
+      <span fxFlex.gt-xs="46">Investimento inicial:
+        <fa-icon [icon]="faQuestion"
+                 matTooltip="fração mínima * preço"
+                 matTooltipClass="tooltip-bigger"
+                 matTooltipPosition="above" class="info-tooltip"></fa-icon>
+      </span>
+        <span
+          fxFlex="grow">R$ {{setupOfferForm.get('price').value * setupOfferForm.get('lot').value | number:'1.2-2':'pt-BR'}}</span>
+      </div>
+      <div fxLayout="column" fxFlex="50" *ngIf="setupOfferForm.get('maxHolderShares').value !== ''"
+           class="balance-divider">
+      <span fxFlex.gt-xs="46">Investimento máximo:
+        <fa-icon [icon]="faQuestion"
+                 matTooltip="fração máxima * preço"
+                 matTooltipClass="tooltip-bigger"
+                 matTooltipPosition="above" class="info-tooltip"></fa-icon>
+      </span>
+        <span
+          fxFlex="grow">R$ {{setupOfferForm.get('price').value * setupOfferForm.get('maxHolderShares').value | number:'1.2-2':'pt-BR'}}</span>
+      </div>
+    </div>
+
+    <div fxLayout.gt-xs="row wrap" fxLayoutGap.gt-xs="8px" fxLayout.lt-sm="column" fxLayoutGap.lt-sm="35px"
+         style="margin-bottom: 20px; margin-top: 20px">
+      <div fxLayoutAlign="left center" fxFlex="auto">
+        <label style="margin-right: 10px">Oferta de Pré-venda?
+          <fa-icon [icon]="faQuestion"
+                   matTooltip="Esta é uma oferta de pré-venda? Ofertas de pré-venda tem um tempo definido para acabar e um valor mínimo de venda para alcançar"
+                   matTooltipClass="tooltip-bigger"
+                   matTooltipPosition="above" class="info-tooltip"></fa-icon>
+        </label>
+        <mat-radio-group formControlName="preSale"
+                         [ngClass]="{'red-border': (setupOfferForm.get('preSale').invalid && clickedCheckForm)}">
+          <mat-radio-button value="true" style="margin: 5px">Sim</mat-radio-button>
+          <mat-radio-button value="false" style="margin: 5px">Não</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+
+    <div fxLayout.gt-xs="row wrap" fxLayoutGap.gt-xs="8px" fxLayout.lt-sm="column" fxLayoutGap.lt-sm="0px"
+         *ngIf="setupOfferForm.get('preSale').value === 'true'">
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Data de Encerramento</mat-label>
+        <label>
+          <input matInput [min]="minDate" formControlName="preSaleEndDate" [matDatepicker]="picker">
+        </label>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" fxFlex="auto">
+        <mat-label>Meta Mínima</mat-label>
+        <input matInput placeholder="Valor Mínimo" formControlName="preSaleThreshold">
+        <mat-hint>Quantidade mínima a ser vendida para efetivação da Pré-Venda</mat-hint>
+        <mat-error *ngIf="setupOfferForm.get('preSaleThreshold').errors?.invalid">Valor maior que o total ofertado!
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <ng-container *ngIf="setupErr !== ''">
+      <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+           *ngIf="setupErr === 'e'">
+        <fa-icon [icon]="icons.solid.warn"></fa-icon>
+        Ops, algo deu errado! Falha de conexão.
+      </div>
+      <div class="error-badge animate__animated animate__fadeInDown animate__faster"
+           *ngIf="setupErr !== 'e'">
+        <fa-icon [icon]="icons.solid.warn"></fa-icon>
+        {{setupErr}}
+      </div>
+    </ng-container>
+  </div>
+
+  <div mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
+    <button mat-button mat-dialog-close type="button" color="warn" (click)="onCancel()">Cancelar</button>
+    <div class="overlay-container">
+      <button mat-flat-button class="next-btn" color="primary" type="submit" [disabled]="setupOfferForm.invalid">
+        Criar
+      </button>
+      <div *ngIf="setupOfferForm.invalid" class="overlay-btn" (click)="checkForm()"
+           matTooltip="Ops, ainda falta preencher alguns campos! Clique para indentificá-los"
+           matTooltipClass="tooltip-bigger" matTooltipPosition="above"></div>
+    </div>
+  </div>
+</form>

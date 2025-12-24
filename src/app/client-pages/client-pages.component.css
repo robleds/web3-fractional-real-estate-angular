@@ -1,0 +1,58 @@
+.client-toolbar {
+  font-size: 15px;
+  position: fixed;
+  z-index: 2;
+}
+
+::ng-deep .client-toolbar .searchbar .mat-form-field-flex {
+  padding-top: 0;
+}
+
+.client-toolbar .searchbar {
+  margin-top: 18px;
+}
+
+::ng-deep .client-toolbar .searchbar .mat-form-field-ripple {
+  background-color: var(--primary) !important;
+}
+
+/*DIALOG WIDTH START*/
+@media screen and (max-width: 599px) {
+  ::ng-deep .login-modal {
+    max-width: 90vw !important;
+  }
+}
+@media screen and (min-width: 600px) {
+  ::ng-deep .login-modal {
+    width: 860px;
+  }
+}
+/*DIALOG WIDTH END*/
+
+/*SIDENAV*/
+.home-sidenav {
+  background-color: var(--primary);
+}
+
+::ng-deep .home-content.mat-drawer-content {
+  overflow-x: hidden;
+}
+
+.home-sidenav mat-nav-list {
+  padding: 20px;
+}
+
+/*SIDENAV*/
+
+.primary-header {
+  background-color: var(--primary);
+  color: white;
+}
+
+.primary-header a {
+  color: white;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+

@@ -1,0 +1,19 @@
+.title {
+  font-weight: 300;
+  font-size: 42px;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 30px;
+  font-weight: 300;
+  color: #a8a8a7;
+}
+
+.table-card-header {
+  padding: 16px;
+}
+
+.searchbar {
+  margin-left: 5px;
+}

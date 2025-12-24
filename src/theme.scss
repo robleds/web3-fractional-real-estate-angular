@@ -1,0 +1,56 @@
+@import '../node_modules/@angular/material/theming';
+
+$custom-typography: mat-typography-config(
+  //$font-family: 'Raleway, sans-serif',
+  $font-family: 'Open Sans, sans-serif'
+);
+
+@include mat-core($custom-typography);
+
+$bricks: (
+  claro: #25a9db,
+  escuro: #2b8ec6,
+  //escuro: #2b8ec6,
+  //accent: #FF9B42,
+  accent: #fa7600,
+  //accent: #35A 696,
+  //accent: #00acc1,
+  contrast: (
+    claro: white,
+    escuro: white,
+    accent: white,
+  )
+);
+$primary: mat-palette($bricks, claro);
+$accent: mat-palette($bricks, accent);
+$theme: mat-light-theme($primary, $accent);
+
+@include angular-material-theme($theme);
+
+.buttonLight {
+  background-color: mat-color($bricks, claro);
+  color:  mat-contrast($bricks, claro);
+  font-weight: 700;
+}
+
+.strokedButtonLight {
+  border-color: mat-color($bricks, claro);
+  color: mat-color($bricks, claro);
+  font-weight: 700;
+}
+
+.accent {
+  color: mat-color($bricks, accent);
+}
+
+.accent-bg {
+  background-color: mat-color($bricks, accent);
+}
+
+.primary {
+  color: mat-color($bricks, claro);
+}
+
+.primary-darker {
+  color: mat-color($bricks, escuro);
+}
